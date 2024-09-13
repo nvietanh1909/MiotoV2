@@ -1,0 +1,180 @@
+﻿@model Mioto.Models.MD_BookingCar
+
+@{
+    ViewBag.Title = "Booking Car";
+    Layout = "~/Views/Shared/_LayoutBase.cshtml";
+}
+<style>
+    body {
+        background-color: #f5f5f5;
+        color: #333;
+        line-height: 1.6;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .booking-wrapper {
+        max-width: 1000px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    .booking-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .booking-section {
+        flex: 1;
+        min-width: 300px;
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .section-title {
+        font-size: 20px;
+        color: #007BFF;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #007BFF;
+        display: inline-block;
+    }
+
+    .booking-details dt {
+        font-weight: bold;
+        margin-top: 10px;
+        color: #555;
+    }
+
+    .booking-details dd {
+        margin-left: 20px;
+        margin-bottom: 10px;
+        color: #666;
+    }
+
+    .form-group {
+        margin-top: 20px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .btn-primary {
+        background-color: #007BFF;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin-top: 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .text-danger {
+        color: #d9534f;
+    }
+
+</style>
+
+@using (Html.BeginForm("BookingCar", "Payment", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="booking-wrapper">
+        <div class="booking-container">
+            <div class="booking-section">
+                <h4 class="section-title">Thông tin xe</h4>
+                <dl class="booking-details">
+                    <dt>Biển số xe</dt>
+                    <dd>@Model.Xe.BienSoXe</dd>
+                    @Html.HiddenFor(model => model.Xe.BienSoXe)
+
+                    <dt>Hãng xe</dt>
+                    <dd>@Model.Xe.HangXe</dd>
+                    @Html.HiddenFor(model => model.Xe.HangXe)
+
+                    <dt>Mẫu xe</dt>
+                    <dd>@Model.Xe.MauXe</dd>
+                    @Html.HiddenFor(model => model.Xe.MauXe)
+
+                    <dt>Số ghế</dt>
+                    <dd>@Model.Xe.SoGhe</dd>
+                    @Html.HiddenFor(model => model.Xe.SoGhe)
+
+                    <dt>Tính năng</dt>
+                    <dd>@Model.Xe.TinhNang</dd>
+                    @Html.HiddenFor(model => model.Xe.TinhNang)
+
+                    <dt>Giá thuê</dt>
+                    <dd>@Model.Xe.GiaThue.ToString("N0") VNĐ</dd>
+                    @Html.HiddenFor(model => model.Xe.GiaThue)
+
+                    <dt>Năm sản xuất</dt>
+                    <dd>@Model.Xe.NamSanXuat</dd>
+                    @Html.HiddenFor(model => model.Xe.NamSanXuat)
+
+                    <dt>Khu vực</dt>
+                    <dd>@Model.Xe.KhuVuc</dd>
+                    @Html.HiddenFor(model => model.Xe.KhuVuc)
+
+                    <dt>Trạng thái</dt>
+                    <dd>@Model.Xe.TrangThai</dd>
+                    @Html.HiddenFor(model => model.Xe.TrangThai)
+                </dl>
+            </div>
+
+            <div class="booking-section">
+                <h4 class="section-title">Thông tin chủ xe</h4>
+                <dl class="booking-details">
+                    <dt>Họ tên</dt>
+                    <dd>@Model.ChuXe.Ten</dd>
+                    @Html.HiddenFor(model => model.ChuXe.Ten)
+
+                    <dt>Email</dt>
+                    <dd>@Model.ChuXe.Email</dd>
+                    @Html.HiddenFor(model => model.ChuXe.Email)
+
+                    <dt>Số điện thoại</dt>
+                    <dd>@Model.ChuXe.SDT</dd>
+                    @Html.HiddenFor(model => model.ChuXe.SDT)
+
+                    <dt>Địa chỉ</dt>
+                    <dd>@Model.ChuXe.DiaChi</dd>
+                    @Html.HiddenFor(model => model.ChuXe.DiaChi)
+                </dl>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <strong>Ngày thuê</strong>
+            @Html.EditorFor(model => model.NgayThue, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.NgayThue, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            <strong>Ngày trả</strong>
+            @Html.EditorFor(model => model.NgayTra, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.NgayTra, "", new { @class = "text-danger" })
+        </div>
+
+        <button type="submit" class="btn btn-primary">THANH TOÁN</button>
+    </div>
+}
