@@ -17,7 +17,6 @@ namespace Mioto.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public MaGiamGia()
         {
-            this.DonThueXe = new HashSet<DonThueXe>();
             this.ThanhToan = new HashSet<ThanhToan>();
         }
     
@@ -28,8 +27,6 @@ namespace Mioto.Models
         public System.DateTime NgayKetThuc { get; set; }
         public int SoLanSuDung { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DonThueXe> DonThueXe { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ThanhToan> ThanhToan { get; set; }
     }

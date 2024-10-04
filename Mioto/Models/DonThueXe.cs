@@ -28,13 +28,11 @@ namespace Mioto.Models
         public System.DateTime NgayTra { get; set; }
         public System.DateTime BDT { get; set; }
         public int TrangThai { get; set; }
-        public Nullable<int> IDMGG { get; set; }
         public decimal TongTien { get; set; }
         public decimal PhanTramHoaHongCTyNhan { get; set; }
     
         public virtual Xe Xe { get; set; }
         public virtual KhachHang KhachHang { get; set; }
-        public virtual MaGiamGia MaGiamGia { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PhiHuyChuyen> PhiHuyChuyen { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

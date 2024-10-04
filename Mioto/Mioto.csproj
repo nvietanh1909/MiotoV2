@@ -172,6 +172,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Tesseract, Version=5.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Tesseract.5.2.0\lib\net48\Tesseract.dll</HintPath>
+    </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
@@ -191,6 +194,7 @@
     <Compile Include="Controllers\DetailAccountController.cs" />
     <Compile Include="Controllers\DrivingLicenseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ORCController.cs" />
     <Compile Include="Controllers\PaymentController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -305,23 +309,6 @@
     <Content Include="Image\SDFAW8Q.jpg" />
     <Content Include="Image\short-logo-mioto.png" />
     <Content Include="Image\yG29m9biewkfwfem6u8QGA.jpg" />
-    <Content Include="Models\DB_Mioto.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DB_Mioto.edmx</DependentUpon>
-      <LastGenOutput>DB_Mioto.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\DB_Mioto.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DB_Mioto.edmx</DependentUpon>
-      <LastGenOutput>DB_Mioto.cs</LastGenOutput>
-    </Content>
-    <EntityDeploy Include="Models\DB_Mioto.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>DB_Mioto.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\DB_Mioto.edmx.diagram">
-      <DependentUpon>DB_Mioto.edmx</DependentUpon>
-    </Content>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
     <Content Include="Content\bootstrap.rtl.css.map" />
     <Content Include="Content\bootstrap.min.css.map" />
@@ -338,10 +325,27 @@
     <Content Include="Content\bootstrap-grid.rtl.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
+    <EntityDeploy Include="Models\DB_Mioto.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>DB_Mioto.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\DB_Mioto.edmx.diagram">
+      <DependentUpon>DB_Mioto.edmx</DependentUpon>
+    </Content>
     <None Include="Properties\PublishProfiles\nvietanh1909-001-site1 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\nvietanh1909-001-site1 - FTP1.pubxml" />
     <None Include="Properties\PublishProfiles\nvietanh1909-001-site1 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\nvietanh1909-001-site1 - Web Deploy1.pubxml" />
+    <Content Include="Models\DB_Mioto.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>DB_Mioto.edmx</DependentUpon>
+      <LastGenOutput>DB_Mioto.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\DB_Mioto.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>DB_Mioto.edmx</DependentUpon>
+      <LastGenOutput>DB_Mioto.cs</LastGenOutput>
+    </Content>
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -417,6 +421,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\DrivingLicense\" />
+    <Folder Include="Views\ORC\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -459,9 +464,11 @@
     <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.props'))" />
     <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets'))" />
+    <Error Condition="!Exists('..\packages\Tesseract.5.2.0\build\Tesseract.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Tesseract.5.2.0\build\Tesseract.targets'))" />
   </Target>
   <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" />
+  <Import Project="..\packages\Tesseract.5.2.0\build\Tesseract.targets" Condition="Exists('..\packages\Tesseract.5.2.0\build\Tesseract.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

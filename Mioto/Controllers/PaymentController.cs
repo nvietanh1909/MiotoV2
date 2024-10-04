@@ -202,7 +202,6 @@ namespace Mioto.Controllers
                     soTien = thanhToan.SoTien;
                     if (soTien < 0) soTien = 0;
                     donThueXe.TongTien = soTien;
-                    donThueXe.IDMGG = maGiamGia.IDMGG;
                     db.Entry(donThueXe).State = EntityState.Modified;
                     db.SaveChanges();
                 }
