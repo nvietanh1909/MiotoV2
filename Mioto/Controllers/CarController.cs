@@ -1,12 +1,10 @@
-﻿
+﻿using Mioto.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Mioto.Models;
 
 namespace Mioto.Controllers
 {
@@ -49,36 +47,24 @@ namespace Mioto.Controllers
                 return RedirectToAction("Login", "Account");
 
             ViewBag.TinhThanhPho = tinhThanhPho;
-
             try
             {
                 if (ModelState.IsValid)
                 {
                     var guest = Session["KhachHang"] as KhachHang;
-                    if (db.Xe.Any(x => x.BienSoXe == cx.BienSoXe))
+                    if (db.Xe.Any(x => x.BienSo == cx.BienSoXe))
                     {
                         ModelState.AddModelError("BienSoXe", "Biển số xe đã đăng ký trên hệ thống");
                         return View(cx);
                     }
 
-                    // Lấy hoặc thêm mới ChuXe và lấy IDCX
                     var existingCX = db.ChuXe.SingleOrDefault(x => x.IDKH == guest.IDKH);
                     if (existingCX == null)
                     {
                         var newCX = new ChuXe
                         {
                             IDKH = guest.IDKH,
-                            Ten = guest.Ten,
-                            Email = guest.Email,
-                            SDT = guest.SDT,
-                            DiaChi = guest.DiaChi,
-                            MatKhau = guest.MatKhau,
-                            GioiTinh = guest.GioiTinh,
-                            NgaySinh = guest.NgaySinh,
-                            SoGPLX = guest.SoGPLX,
-                            CCCD = guest.CCCD,
-                            HinhAnh = guest.HinhAnh,
-                            TrangThai = "Yes"
+                            HinhAnh = guest.HinhAnh
                         };
                         db.ChuXe.Add(newCX);
                         db.SaveChanges();
@@ -103,16 +89,16 @@ namespace Mioto.Controllers
                     var xe = new Xe
                     {
                         IDCX = existingCX.IDCX,
-                        BienSoXe = cx.BienSoXe,
+                        BienSo = cx.BienSoXe,
                         HangXe = cx.HangXe,
-                        MauXe = cx.MauXe,
+                        Mau = cx.MauXe,
                         SoGhe = cx.SoGhe,
                         TinhNang = cx.TinhNang,
                         GiaThue = cx.GiaThue,
-                        NamSanXuat = cx.NamSanXuat,
+                        NamSX = cx.NamSanXuat,
                         KhuVuc = cx.KhuVuc,
                         DonGiaVanChuyen = 0,
-                        TrangThai = "Sẵn sàng",
+                        TrangThaiThue = "Sẵn sàng",
                         HinhAnh = string.Join(";", hinhAnhList)
                     };
 
@@ -128,6 +114,5 @@ namespace Mioto.Controllers
             }
             return View(cx);
         }
-
     }
 }

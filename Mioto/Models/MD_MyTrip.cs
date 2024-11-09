@@ -9,7 +9,7 @@ namespace Mioto.Models
     public class MD_MyTrip
     {
         [Required]
-        public int IDDT { get; set; }  
+        public int IDDT { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -27,7 +27,6 @@ namespace Mioto.Models
         [Required]
         public decimal TongTien { get; set; }
 
-        public ThanhToan ThanhToan { get; set; } 
-        public ChuXe ChuXe { get; set; } 
+        public ChuXe ChuXe { get; set; }
     }
 }

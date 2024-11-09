@@ -34,15 +34,18 @@ namespace Mioto.Controllers
         public ActionResult Login(MD_Login _user)
         {
             var IsGuest = db.KhachHang.SingleOrDefault(s => s.Email == _user.Email && s.MatKhau == _user.MatKhau);
-            var IsChuXe = db.ChuXe.SingleOrDefault(s => s.Email == _user.Email && s.MatKhau == _user.MatKhau);
             var IsNhanVien = db.NhanVien.SingleOrDefault(s => s.Email == _user.Email && s.MatKhau == _user.MatKhau);
             // Khách hàng
             if(IsGuest != null)
             {
-                var GPLX = db.GPLX.SingleOrDefault(x => x.IDKH == IsGuest.IDKH);
+                var IsChuXe = db.ChuXe.SingleOrDefault(x => x.IDKH == IsGuest.IDKH);
+                if(IsChuXe != null)
+                {
+                    Session["KhachHang"] = IsGuest;
+                    Session["ChuXe"] = IsChuXe;
+                    return RedirectToAction("Home", "Home");
+                }
                 Session["KhachHang"] = IsGuest;
-                Session["ChuXe"] = IsChuXe;
-                Session["GPLX"] = GPLX;
                 return RedirectToAction("Home", "Home");
             }
 
@@ -86,36 +89,12 @@ namespace Mioto.Controllers
                         GioiTinh = kh.GioiTinh,
                         DiaChi = kh.DiaChi,
                         SDT = kh.SDT,
-                        SoGPLX = "No",
+                        GPLX = "0",
                         NgaySinh = kh.NgaySinh,
                         MatKhau = kh.MatKhau,
-                        CCCD = "No"
+                        CCCD = "0"
                     };
                     db.KhachHang.Add(newKhachHang);
-                    db.SaveChanges();
-
-                    var newCCCD = new CCCD
-                    {
-                        SoCCCD = "No",
-                        Ten = kh.Ten,
-                        NgaySinh = kh.NgaySinh,
-                        GioiTinh = kh.GioiTinh,
-                        DiaChi = kh.DiaChi,
-                        IDKH = newKhachHang.IDKH,
-                        TrangThai = newKhachHang.CCCD
-                    };
-                    db.CCCD.Add(newCCCD);
-                    db.SaveChanges();
-
-                    var newGPLX = new GPLX
-                    {
-                        IDKH = newKhachHang.IDKH,
-                        Ten = kh.Ten,
-                        NgaySinh = kh.NgaySinh,
-                        SoGPLX = newKhachHang.SoGPLX,
-                        TrangThai = newKhachHang.SoGPLX
-                    };
-                    db.GPLX.Add(newGPLX);
                     db.SaveChanges();
 
                     TempData["Message"] = "Đăng ký thành công!";
@@ -137,7 +116,6 @@ namespace Mioto.Controllers
             FormsAuthentication.SignOut();
             return RedirectToAction("Home");
         }
-
     }
 
 }

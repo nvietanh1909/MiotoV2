@@ -19,9 +19,9 @@
     @foreach (var xe in Model)
     {
 
-        if (xe.TrangThai == "Sẵn sàng")
+        if (xe.TrangThaiThue == "Sẵn sàng")
         {
-            <a class="item item-car" href="@Url.Action("InfoCar", "Payment", new { BienSoXe = xe.BienSoXe })">
+            <a class="item item-car" href="@Url.Action("InfoCar", "Payment", new { BienSoXe = xe.BienSo })">
                 <div class="item-box">
                     <div class="img-car">
                         <div class="fix-img">
@@ -41,7 +41,7 @@
                             </span>
                         </div>
                         <div class="desc-name">
-                            <p>@xe.HangXe @xe.NamSanXuat</p>
+                            <p>@xe.HangXe @xe.NamSX</p>
                         </div>
                         <div class="desc-address-price">
                             <div class="address">

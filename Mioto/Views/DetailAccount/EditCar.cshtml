@@ -25,7 +25,8 @@
                         </div>
                         <div class="wrap-input disabled">
                             <div class="wrap-text">
-                                <input disabled="" type="text" placeholder="@Model.BienSoXe" value="">
+                                <input disabled="" type="text" placeholder="@Model.BienSo" value="">
+                                @Html.HiddenFor(model => model.BienSo)
                             </div>
                         </div>
                     </div>
@@ -50,8 +51,8 @@
                             </div>
                         </div>
                         <div class="wrap-input">
-                            @Html.EditorFor(model => model.MauXe, new { @class = "form-control", placeholder = "Màu xe của bạn" })
-                            @Html.ValidationMessageFor(model => model.MauXe, "", new { @class = "text-danger" })
+                            @Html.EditorFor(model => model.Mau, new { @class = "form-control", placeholder = "Màu xe của bạn" })
+                            @Html.ValidationMessageFor(model => model.Mau, "", new { @class = "text-danger" })
                         </div>
                     </div>
                     <div class="custom-input">
@@ -75,8 +76,8 @@
                             </div>
                         </div>
                         <div class="wrap-input">
-                            @Html.EditorFor(model => model.NamSanXuat, new { @class = "form-control", placeholder = "Năm sản xuất của xe" })
-                            @Html.ValidationMessageFor(model => model.NamSanXuat, "", new { @class = "text-danger" })
+                            @Html.EditorFor(model => model.NamSX, new { @class = "form-control", placeholder = "Năm sản xuất của xe" })
+                            @Html.ValidationMessageFor(model => model.NamSX, "", new { @class = "text-danger" })
                         </div>
                     </div>
                     <div class="custom-input">
@@ -139,8 +140,8 @@
                                 </div>
                             </div>
                             <div class="wrap-input">
-                                @Html.DropDownListFor(model => model.TrangThai, (IEnumerable<SelectListItem>)ViewBag.TrangThaiXe, "Chọn...", new { @class = "form-control", style = "font-size: 16px; width: 100%;" })
-                                @Html.ValidationMessageFor(model => model.TrangThai, "", new { @class = "text-danger" })
+                                @Html.DropDownListFor(model => model.TrangThaiThue, (IEnumerable<SelectListItem>)ViewBag.TrangThaiXe, "Chọn...", new { @class = "form-control", style = "font-size: 16px; width: 100%;" })
+                                @Html.ValidationMessageFor(model => model.TrangThaiThue, "", new { @class = "text-danger" })
                             </div>
                         </div>
                     </div>

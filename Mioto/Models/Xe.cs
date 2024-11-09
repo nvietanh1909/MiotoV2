@@ -17,26 +17,23 @@ namespace Mioto.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Xe()
         {
-            this.DanhGia = new HashSet<DanhGia>();
             this.DonThueXe = new HashSet<DonThueXe>();
         }
     
-        public string BienSoXe { get; set; }
+        public string BienSo { get; set; }
         public string HangXe { get; set; }
-        public string MauXe { get; set; }
-        public int NamSanXuat { get; set; }
+        public string Mau { get; set; }
+        public int NamSX { get; set; }
         public int SoGhe { get; set; }
         public string TinhNang { get; set; }
         public decimal GiaThue { get; set; }
-        public string TrangThai { get; set; }
-        public int IDCX { get; set; }
+        public string TrangThaiThue { get; set; }
         public string HinhAnh { get; set; }
         public string KhuVuc { get; set; }
         public decimal DonGiaVanChuyen { get; set; }
+        public int IDCX { get; set; }
     
         public virtual ChuXe ChuXe { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DanhGia> DanhGia { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DonThueXe> DonThueXe { get; set; }
     }

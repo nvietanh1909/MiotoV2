@@ -32,14 +32,14 @@
                    @foreach (var xe in Model)
                    {
                        <tr class="row100">
-                           <td class="column100">@Html.DisplayFor(modelItem => xe.BienSoXe)</td>
+                           <td class="column100">@Html.DisplayFor(modelItem => xe.BienSo)</td>
                            <td class="column100">@Html.DisplayFor(modelItem => xe.HangXe)</td>
                            <td class="column100">@Html.DisplayFor(modelItem => xe.KhuVuc)</td>
                            <td class="column100">@Html.DisplayFor(modelItem => xe.TinhNang)</td>
-                           <td class="column100">@Html.DisplayFor(modelItem => xe.TrangThai)</td>
+                           <td class="column100">@Html.DisplayFor(modelItem => xe.TrangThaiThue)</td>
                            <td class="column100">@string.Format("{0:N0} VNĐ", xe.GiaThue)</td>
                            <td class="column100">
-                               @Html.ActionLink("Chỉnh sửa", "EditCar", new { BienSoXe = xe.BienSoXe }, new { @class = "btn btn-efit" })
+                               @Html.ActionLink("Chỉnh sửa", "EditCar", new { BienSoXe = xe.BienSo }, new { @class = "btn btn-efit" })
                            </td>
                        </tr>
                    }

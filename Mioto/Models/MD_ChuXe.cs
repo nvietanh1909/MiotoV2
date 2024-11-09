@@ -8,15 +8,7 @@ namespace Mioto.Models
 {
     public class MD_ChuXe
     {
-        public int IDCX { get; set; }
-        public string Ten { get; set; }
-        public string DiaChi { get; set; }
-        public string Email { get; set; }
-        public string SDT { get; set; }
-        public DateTime NgaySinh { get; set; }
-        public string GioiTinh { get; set; }
-        public string TrangThai { get; set; }
-        public string MatKhau { get; set; }
+        // Các thuộc tính của chủ xe
         public string HinhAnh { get; set; }
 
         // Các thuộc tính của Xe

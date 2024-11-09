@@ -2,15 +2,16 @@
 @{
     ViewBag.Title = "InfoCar";
     Layout = "~/Views/Shared/_LayoutBase.cshtml";
+    var khachhang = Session["KhachHang"] as Mioto.Models.KhachHang;
 }
-@model Mioto.Models.Xe
+@model Mioto.Models.MD_InfoCar
 <div class="modal-body">
     <div class="detail-car">
         <div class="cover-car">
             <div class="m-container">
                 <div class="cover-car-container" style="display: flex; justify-content: center">
                     <div class="cover-car-item">
-                        <img style=" width: 1200px;" loading="lazy" src="@Url.Content("~/CarImages/" + (Model.HinhAnh ?? "DefaultAvatar.png"))">
+                        <img style=" width: 1200px;" loading="lazy" src="@Url.Content("~/CarImages/" + (Model.Xe.HinhAnh ?? "DefaultAvatar.png"))">
                     </div>
                 </div>
             </div>
@@ -20,10 +21,10 @@
                 <div class="content-detail">
                     <div class="info-car-basic">
                         <div class="group-name">
-                            <h3>@Model.HangXe @Model.NamSanXuat</h3>
+                            <h3>@Model.Xe.HangXe @Model.Xe.NamSX</h3>
                         </div>
                         <div class="group-total">
-                            <span class="info">@Model.KhuVuc</span>
+                            <span class="info">@Model.Xe.KhuVuc</span>
                         </div>
                     </div>
                 </div>
@@ -39,16 +40,16 @@
                     </div>
                     <div class="rent-box" id="cardetail" style="position: relative;">
                         <div class="price">
-                            <h4><span>@String.Format("{0:N0} VNĐ/ngày", Model.GiaThue)</span></h4>
+                            <h4><span>@String.Format("{0:N0} VNĐ/ngày", Model.Xe.GiaThue)</span></h4>
                         </div>
                         <div class="dropdown-form">
                             <label>Địa điểm giao xe</label>
                             <div class="wrap-form">
-                                <span class="value">@Model.KhuVuc</span>
+                                <span class="value">@Model.Xe.KhuVuc</span>
                             </div>
                         </div>
                         <div class="line-page"></div>
-                        @Html.ActionLink("CHỌN THUÊ", "BookingCar", "Payment", new { BienSoXe = Model.BienSoXe }, new { @class = "btn btn-primary btn--m width-100" })
+                        @Html.ActionLink("CHỌN THUÊ", "BookingCar", "Payment", new { BienSoXe = Model.Xe.BienSo }, new { @class = "btn btn-primary btn--m width-100" })
                     </div>
 
                 </div>
@@ -64,7 +65,7 @@
                                 </div>
                                 <div class="title">
                                     <p class="sub">Số ghế</p>
-                                    <p class="main">@Model.SoGhe chỗ</p>
+                                    <p class="main">@Model.Xe.SoGhe chỗ</p>
                                 </div>
                             </div>
 
@@ -74,14 +75,89 @@
                                 </div>
                                 <div class="title">
                                     <p class="sub">Tính năng</p>
-                                    <p class="main">@Model.TinhNang</p>
+                                    <p class="main">@Model.Xe.TinhNang</p>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <div class="info-car-desc">
+                        <h6>Chủ xe</h6>
+                        <div class="profile-info">
+                            <a href="#" class="profile-desc">
+                                <div class="avatar avatar--m">
+                                    <img src="@Url.Content("~/AvatarUser/" + (Model.ChuXe.HinhAnh?? "DefaultAvatar.jpg"))" alt="Avatar chủ xe" />
+                                </div>
+
+                                <div class="info">
+                                    <h5>@Model.ChuXe.Ten</h5>
+                                    <div class="verifi"></div>
+                                </div>
+                            </a>
+
+                            <div class="owner-response">
+                                <div class="response-desc">
+                                    <p class="title">Tỉ lệ phản hồi</p>
+                                    <p class="rate">100%</p>
+                                </div>
+
+                                <div class="response-desc">
+                                    <p class="title">Thời gian phản hồi</p>
+                                    <p class="rate">5 phút</p>
+                                </div>
+
+                                <div class="response-desc">
+                                    <p class="title">Tỉ lệ đồng ý</p>
+                                    <p class="rate">100%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if (Model.KhachHang)
+                    {
+                        <div>
+                            @using (Html.BeginForm("CarComment", "Payment", FormMethod.Post))
+                            {
+                                <textarea name="DanhGia" class="comment-box" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc; resize: vertical;" placeholder="Hãy viết bình luận của bạn..." rows="4"></textarea>
+                                <input type="hidden" name="BienSoXe" value="@Model.DonThueXe.BienSo" />
+                                <div style="display: flex; justify-content: right">
+                                    <input type="submit" value="Gửi" class="btn" />
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    @foreach (var danhgia in Model.DanhGia)
+                    {
+                        <div class="info-car-desc">
+                            <div class="reviews"></div>
+                            <div class="list-reviews">
+                                <div class="item-review">
+                                    <div class="profile">
+                                        <div class="desc">
+                                            <a href="#" class="avatar avatar--m">
+                                                <img src="#" alt="Mioto - Thuê xe tự lái" />
+                                            </a>
+                                            <div class="info">
+                                                <a href="#">
+                                                    <h6></h6>
+                                                </a>
+                                            </div>
+                                            <div class="rate">
+                                                <div class="star-ratings"></div>
+                                                <div class="time">
+                                                    @danhgia.Ngay
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <pre class="main-review">@danhgia.NoiDung</pre>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
     </div>
 </div>
-

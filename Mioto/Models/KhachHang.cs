@@ -17,18 +17,15 @@ namespace Mioto.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public KhachHang()
         {
-            this.CCCD1 = new HashSet<CCCD>();
             this.ChuXe = new HashSet<ChuXe>();
-            this.DanhGia = new HashSet<DanhGia>();
             this.DonThueXe = new HashSet<DonThueXe>();
-            this.GPLX = new HashSet<GPLX>();
         }
     
         public int IDKH { get; set; }
         public string Ten { get; set; }
         public string DiaChi { get; set; }
         public string Email { get; set; }
-        public string SoGPLX { get; set; }
+        public string GPLX { get; set; }
         public string SDT { get; set; }
         public System.DateTime NgaySinh { get; set; }
         public string CCCD { get; set; }
@@ -37,14 +34,8 @@ namespace Mioto.Models
         public string MatKhau { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<CCCD> CCCD1 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ChuXe> ChuXe { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DanhGia> DanhGia { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DonThueXe> DonThueXe { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<GPLX> GPLX { get; set; }
     }
 }

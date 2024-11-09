@@ -15,13 +15,10 @@ namespace Mioto.Models
     public partial class DanhGia
     {
         public int IDDG { get; set; }
-        public int IDKH { get; set; }
-        public string BienSoXe { get; set; }
         public string NoiDung { get; set; }
-        public int SoSao { get; set; }
-        public System.DateTime NgayDanhGia { get; set; }
+        public System.DateTime Ngay { get; set; }
+        public int IDDT { get; set; }
     
-        public virtual Xe Xe { get; set; }
-        public virtual KhachHang KhachHang { get; set; }
+        public virtual DonThueXe DonThueXe { get; set; }
     }
 }

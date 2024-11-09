@@ -2,12 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 
@@ -15,108 +12,8 @@ namespace Mioto.Controllers
 {
     public class AdminController : Controller
     {
-
         DB_MiotoEntities db = new DB_MiotoEntities();
-        public bool IsLoggedIn { get => Session["NhanVien"] != null;}
-
-        // GET: Admin
-        public ActionResult AdminPaymentVerification()
-        {
-            if (!IsLoggedIn)
-                return RedirectToAction("Login", "Account");
-            var ds_thanhtoan = db.ThanhToan.ToList();
-            return View(ds_thanhtoan);
-        }
-
-        public ActionResult ApprovePayment(int idtt)
-        {
-            if (!IsLoggedIn)
-                return RedirectToAction("Login", "Account");
-
-            try
-            {
-                var thanhtoan = db.ThanhToan.Find(idtt);
-                if (thanhtoan == null)
-                    return HttpNotFound();
-
-                var donthuexe = db.DonThueXe.FirstOrDefault(x => x.IDDT == thanhtoan.IDDT);
-                if (donthuexe == null)
-                    return HttpNotFound();
-
-                var xe = db.Xe.FirstOrDefault(x => x.BienSoXe == donthuexe.BienSoXe);
-                if (xe == null)
-                    return HttpNotFound();
-
-                var chuxe = db.ChuXe.FirstOrDefault(x => x.IDCX == xe.IDCX);
-                if (chuxe == null)
-                    return HttpNotFound();
-
-                thanhtoan.TrangThai = "Đã thanh toán";
-                db.Entry(thanhtoan).State = EntityState.Modified;
-
-                var doanhThuChuXe = db.DoanhThuChuXe.FirstOrDefault(d => d.IDCX == chuxe.IDCX);
-                if (doanhThuChuXe == null)
-                {
-                    doanhThuChuXe = new DoanhThuChuXe
-                    {
-                        IDCX = chuxe.IDCX,
-                        DoanhThuNgay = 0,
-                        DoanhThuTuan = 0,
-                        DoanhThuThang = 0,
-                        DoanhThuNam = 0,
-                        NgayCapNhat = DateTime.Now,
-                        SoTuanTrongNam = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(DateTime.Now, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday)
-                    };
-                    db.DoanhThuChuXe.Add(doanhThuChuXe);
-                    db.SaveChanges();
-                }
-
-                var ngayHienTai = DateTime.Now;
-                var soTienThanhToan = thanhtoan.SoTien;
-
-                if (doanhThuChuXe.NgayCapNhat.Day != ngayHienTai.Day)
-                {
-                    doanhThuChuXe.DoanhThuNgay = 0;
-                    doanhThuChuXe.NgayCapNhat = ngayHienTai;
-                }
-                doanhThuChuXe.DoanhThuNgay += soTienThanhToan;
-
-                var soTuanTrongNam = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(ngayHienTai, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-                if (doanhThuChuXe.SoTuanTrongNam != soTuanTrongNam)
-                {
-                    doanhThuChuXe.DoanhThuTuan = 0;
-                    doanhThuChuXe.SoTuanTrongNam = soTuanTrongNam;
-                }
-                doanhThuChuXe.DoanhThuTuan += soTienThanhToan;
-
-                if (doanhThuChuXe.NgayCapNhat.Month != ngayHienTai.Month)
-                {
-                    doanhThuChuXe.DoanhThuThang = 0;
-                }
-                doanhThuChuXe.DoanhThuThang += soTienThanhToan;
-
-                if (doanhThuChuXe.NgayCapNhat.Year != ngayHienTai.Year)
-                {
-                    doanhThuChuXe.DoanhThuNam = 0;
-                }
-                doanhThuChuXe.DoanhThuNam += soTienThanhToan;
-
-                db.Entry(doanhThuChuXe).State = EntityState.Modified;
-                db.SaveChanges();
-
-                return RedirectToAction("AdminPaymentVerification");
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                ModelState.AddModelError("", "Xảy ra lỗi đồng bộ hóa lạc quan: " + ex.Message);
-                return RedirectToAction("AdminPaymentVerification");
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Xảy ra lỗi: " + ex.Message);
-                return RedirectToAction("AdminPaymentVerification");
-            }
-        }
+        public bool IsLoggedIn { get => Session["NhanVien"] != null; }
 
         // GET: DetailAccount
         public ActionResult InfoAccount()
@@ -181,6 +78,7 @@ namespace Mioto.Controllers
             return View("InfoAccount");
         }
 
+
         public ActionResult ManagerDiscount()
         {
             if (!IsLoggedIn)
@@ -216,11 +114,11 @@ namespace Mioto.Controllers
 
                     var newDiscount = new MaGiamGia
                     {
-                        Ma = model.Ma,
+                        MaGG = model.Ma,
                         PhanTramGiam = model.PhanTramGiam,
                         NgayBatDau = model.NgayBatDau,
                         NgayKetThuc = model.NgayKetThuc,
-                        SoLanSuDung = model.SolanSuDung
+                        SoLuong = model.SolanSuDung
                     };
 
                     db.MaGiamGia.Add(newDiscount);
@@ -279,11 +177,11 @@ namespace Mioto.Controllers
                     }
 
                     // Cập nhật các thuộc tính của mã giảm giá
-                    existingDiscount.Ma = model.Ma;
+                    existingDiscount.MaGG = model.MaGG;
                     existingDiscount.PhanTramGiam = model.PhanTramGiam;
                     existingDiscount.NgayBatDau = model.NgayBatDau;
                     existingDiscount.NgayKetThuc = model.NgayKetThuc;
-                    existingDiscount.SoLanSuDung = model.SoLanSuDung;
+                    existingDiscount.SoLuong = model.SoLuong;
 
                     db.Entry(existingDiscount).State = EntityState.Modified;
                     db.SaveChanges();
@@ -319,112 +217,6 @@ namespace Mioto.Controllers
                 ModelState.AddModelError("", "Xảy ra lỗi khi xóa mã giảm giá: " + ex.Message);
                 return RedirectToAction("ManagerDiscount");
             }
-        }
-
-        public ActionResult ListCarsInSystem()
-        {
-            if (!IsLoggedIn)
-                return RedirectToAction("Login", "Account");
-            var xe = db.Xe.ToList();
-            return View();
-        }
-
-        public ActionResult RentedCompany()
-        {
-            // Kiểm tra người dùng đã đăng nhập
-            if (!IsLoggedIn)
-                return RedirectToAction("Login", "Account");
-
-            // Lấy ID từ Session NhanVien đang đăng nhập hiện tại
-            var nhanvien = Session["NhanVien"] as NhanVien;
-
-            // Lấy ngày, tuần, tháng, năm hiện tại
-            var ngayHienTai = DateTime.Now;
-            var tuanHienTai = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(ngayHienTai, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-            var thangHienTai = ngayHienTai.Month;
-            var namHienTai = ngayHienTai.Year;
-
-            // Tính doanh thu công ty theo ngày, tuần, tháng, năm
-            var thanhToanDaThanhToan = db.ThanhToan
-                                         .Where(x => x.TrangThai == "Đã thanh toán")
-                                         .ToList();
-
-            decimal doanhThuNgay = 0;
-            decimal doanhThuTuan = 0;
-            decimal doanhThuThang = 0;
-            decimal doanhThuNam = 0;
-
-            foreach (var thanhToan in thanhToanDaThanhToan)
-            {
-                var donThueXe = db.DonThueXe.FirstOrDefault(x => x.IDDT == thanhToan.IDDT);
-                if (donThueXe != null)
-                {
-                    decimal hoaHong = thanhToan.SoTien * (donThueXe.PhanTramHoaHongCTyNhan / 100);
-
-                    // Xác định thời gian của giao dịch
-                    var ngayGiaoDich = thanhToan.NgayTT; 
-                    var tuanGiaoDich = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(ngayGiaoDich, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-                    var thangGiaoDich = ngayGiaoDich.Month;
-                    var namGiaoDich = ngayGiaoDich.Year;
-
-                    if (ngayGiaoDich.Date == ngayHienTai.Date)
-                        doanhThuNgay += hoaHong;
-
-                    if (tuanGiaoDich == tuanHienTai && namGiaoDich == namHienTai)
-                        doanhThuTuan += hoaHong;
-
-                    if (thangGiaoDich == thangHienTai && namGiaoDich == namHienTai)
-                        doanhThuThang += hoaHong;
-
-                    if (namGiaoDich == namHienTai)
-                        doanhThuNam += hoaHong;
-                }
-            }
-
-            // Kiểm tra xem đã có doanh thu công ty trong cơ sở dữ liệu chưa
-            var doanhThuCongTy = db.DoanhThuCongTy
-                .FirstOrDefault(d =>
-                    d.NgayCapNhat.Year == namHienTai &&
-                    d.NgayCapNhat.Month == thangHienTai &&
-                    d.NgayCapNhat.Day == ngayHienTai.Day);
-
-            if (doanhThuCongTy == null)
-            {
-                // Nếu chưa có, tạo mới và lưu vào cơ sở dữ liệu
-                doanhThuCongTy = new DoanhThuCongTy
-                {
-                    IDNV = nhanvien.IDNV,
-                    DoanhThuNgay = doanhThuNgay,
-                    DoanhThuTuan = doanhThuTuan,
-                    DoanhThuThang = doanhThuThang,
-                    DoanhThuNam = doanhThuNam,
-                    NgayCapNhat = ngayHienTai
-                };
-                db.DoanhThuCongTy.Add(doanhThuCongTy);
-            }
-            else
-            {
-                // Cập nhật doanh thu hiện tại
-                doanhThuCongTy.DoanhThuNgay = doanhThuNgay;
-                doanhThuCongTy.DoanhThuTuan = doanhThuTuan;
-                doanhThuCongTy.DoanhThuThang = doanhThuThang;
-                doanhThuCongTy.DoanhThuNam = doanhThuNam;
-                doanhThuCongTy.NgayCapNhat = ngayHienTai;
-                db.Entry(doanhThuCongTy).State = EntityState.Modified;
-            }
-
-            db.SaveChanges();
-
-            // Truyền dữ liệu doanh thu tới ViewModel
-            var model = new DoanhThuCongTy
-            {
-                DoanhThuNgay = doanhThuCongTy.DoanhThuNgay,
-                DoanhThuTuan = doanhThuCongTy.DoanhThuTuan,
-                DoanhThuThang = doanhThuCongTy.DoanhThuThang,
-                DoanhThuNam = doanhThuCongTy.DoanhThuNam
-            };
-
-            return View(model);
         }
 
 

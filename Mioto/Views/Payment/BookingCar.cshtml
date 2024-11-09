@@ -4,6 +4,13 @@
     ViewBag.Title = "Booking Car";
     Layout = "~/Views/Shared/_LayoutBase.cshtml";
 }
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="~/zpgateway/css/bootstrap.min.css">
+<link rel="stylesheet" href="~/zpgateway/css/blue.css">
+<title>ZaloPay Gateway | Quy Cách</title>
+
 <style>
     body {
         background-color: #f5f5f5;
@@ -84,14 +91,135 @@
         width: 100%;
     }
 
-    .btn-primary:hover {
-        background-color: #0056b3;
-    }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
 
     .text-danger {
         color: #d9534f;
     }
 
+    .payment-form {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+        color: white;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        color: white;
+    }
+
+    h6 {
+        margin-top: 0;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    p {
+        font-size: 18px;
+        color: #333;
+    }
+
+    #totalAmount {
+        font-size: 20px;
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .icheckbox_flat-blue, .iradio_flat-blue {
+        top: -2px;
+        margin-right: 5px;
+    }
+
+    .txtGray {
+        color: #798594;
+    }
+
+    .bank-group {
+        margin-left: 30px;
+        max-width: 850px;
+    }
+
+    a, a:hover, a:visited, a:link {
+        text-decoration: none !important;
+        color: #293C56;
+    }
+
+        a.bank-item {
+            display: inline-block;
+            width: 180px;
+            height: 48px;
+            padding: 10px;
+            border-radius: 4px;
+            border: 2px solid #f1f1f1;
+            position: relative;
+            vertical-align: top;
+            margin-right: 10px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+            a.bank-item .checkmark {
+                display: none;
+                width: 20px;
+                height: 20px;
+            }
+
+            a.bank-item.selected .checkmark {
+                display: block;
+                position: absolute;
+                top: -10px;
+                right: -10px;
+                margin-right: 0;
+            }
+
+            a.bank-item.selected, a.bank-item:hover {
+                border: 2px solid #04BE04;
+            }
+
+            a.bank-item img {
+                vertical-align: middle !important;
+                display: inline-block;
+                margin-right: 5px;
+            }
 </style>
 
 @using (Html.BeginForm("BookingCar", "Payment", FormMethod.Post))
@@ -104,16 +232,16 @@
                 <h4 class="section-title">Thông tin xe</h4>
                 <dl class="booking-details">
                     <dt>Biển số xe</dt>
-                    <dd>@Model.Xe.BienSoXe</dd>
-                    @Html.HiddenFor(model => model.Xe.BienSoXe)
+                    <dd>@Model.Xe.BienSo</dd>
+                    @Html.HiddenFor(model => model.Xe.BienSo)
 
                     <dt>Hãng xe</dt>
                     <dd>@Model.Xe.HangXe</dd>
                     @Html.HiddenFor(model => model.Xe.HangXe)
 
                     <dt>Mẫu xe</dt>
-                    <dd>@Model.Xe.MauXe</dd>
-                    @Html.HiddenFor(model => model.Xe.MauXe)
+                    <dd>@Model.Xe.Mau</dd>
+                    @Html.HiddenFor(model => model.Xe.Mau)
 
                     <dt>Số ghế</dt>
                     <dd>@Model.Xe.SoGhe</dd>
@@ -128,16 +256,16 @@
                     @Html.HiddenFor(model => model.Xe.GiaThue)
 
                     <dt>Năm sản xuất</dt>
-                    <dd>@Model.Xe.NamSanXuat</dd>
-                    @Html.HiddenFor(model => model.Xe.NamSanXuat)
+                    <dd>@Model.Xe.NamSX</dd>
+                    @Html.HiddenFor(model => model.Xe.NamSX)
 
                     <dt>Khu vực</dt>
                     <dd>@Model.Xe.KhuVuc</dd>
                     @Html.HiddenFor(model => model.Xe.KhuVuc)
 
                     <dt>Trạng thái</dt>
-                    <dd>@Model.Xe.TrangThai</dd>
-                    @Html.HiddenFor(model => model.Xe.TrangThai)
+                    <dd>@Model.Xe.TrangThaiThue</dd>
+                    @Html.HiddenFor(model => model.Xe.TrangThaiThue)
                 </dl>
             </div>
 
@@ -145,36 +273,285 @@
                 <h4 class="section-title">Thông tin chủ xe</h4>
                 <dl class="booking-details">
                     <dt>Họ tên</dt>
-                    <dd>@Model.ChuXe.Ten</dd>
-                    @Html.HiddenFor(model => model.ChuXe.Ten)
+                    <dd>@Model.KhachHang.Ten</dd>
+                    @Html.HiddenFor(model => model.KhachHang.Ten)
 
                     <dt>Email</dt>
-                    <dd>@Model.ChuXe.Email</dd>
-                    @Html.HiddenFor(model => model.ChuXe.Email)
+                    <dd>@Model.KhachHang.Email</dd>
+                    @Html.HiddenFor(model => model.KhachHang.Email)
 
                     <dt>Số điện thoại</dt>
-                    <dd>@Model.ChuXe.SDT</dd>
-                    @Html.HiddenFor(model => model.ChuXe.SDT)
+                    <dd>@Model.KhachHang.SDT</dd>
+                    @Html.HiddenFor(model => model.KhachHang.SDT)
 
                     <dt>Địa chỉ</dt>
-                    <dd>@Model.ChuXe.DiaChi</dd>
-                    @Html.HiddenFor(model => model.ChuXe.DiaChi)
+                    <dd>@Model.KhachHang.DiaChi</dd>
+                    @Html.HiddenFor(model => model.KhachHang.DiaChi)
                 </dl>
             </div>
         </div>
-
         <div class="form-group">
             <strong>Ngày thuê</strong>
-            @Html.EditorFor(model => model.NgayThue, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.EditorFor(model => model.NgayThue, new { htmlAttributes = new { @class = "form-control", id = "NgayThue" } })
             @Html.ValidationMessageFor(model => model.NgayThue, "", new { @class = "text-danger" })
         </div>
-
         <div class="form-group">
             <strong>Ngày trả</strong>
-            @Html.EditorFor(model => model.NgayTra, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.EditorFor(model => model.NgayTra, new { htmlAttributes = new { @class = "form-control", id = "NgayTra" } })
             @Html.ValidationMessageFor(model => model.NgayTra, "", new { @class = "text-danger" })
         </div>
 
-        <button type="submit" class="btn btn-primary">THANH TOÁN</button>
+        <div class="form-group">
+            <label for="discountCode">Mã giảm giá:</label>
+            <input type="text" id="discountCode" name="discountCode" class="form-control" placeholder="Nhập mã giảm giá của bạn" />
+            <button type="button" id="applyDiscount" class="btn btn-primary">Áp dụng mã giảm giá</button>
+        </div>
+
+        <div class="form-group">
+            <label for="totalAmount">Tổng tiền:</label>
+            <span id="GiaThue">0 VNĐ</span>
+        </div>
+
+        <p>Vui lòng chọn hình thức thanh toán:</p>
+        <div class="mb-1">
+            <label><input type="radio" name="iCheck" class="iradio_flat-blue"> Ví <img src="~/zpgateway/images/logo-zalopay.svg" alt=""></label>
+        </div>
+        <div class="mb-1">
+            <label><input type="radio" name="iCheck" class="iradio_flat-blue"> Visa, Mastercard, JCB <span class="txtGray">(qua cổng ZaloPay)</span></label>
+        </div>
+        <div class="mb-1">
+            <label><input type="radio" name="iCheck" class="iradio_flat-blue" checked> Thẻ ATM <span class="txtGray">(qua cổng ZaloPay)</span></label>
+        </div>
+
+        <div class="bank-group">
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-vtb.svg" alt=""> Vietinbank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-varb.svg" alt=""> Agribank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-vcb.svg" alt=""> Vietcombank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-bidv.svg" alt=""> BIDV
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-dab.svg" alt=""> Đông Á Bank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-scb.svg" alt=""> Sacombank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-acb.svg" alt=""> ACB
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-mb.svg" alt=""> MBBank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-tcb.svg" alt=""> Techcombank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-vpb.svg" alt=""> VPBank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-eib.svg" alt=""> Eximbank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-vib.svg" alt=""> VIB
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-hdb.svg" alt=""> HDBank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-ojb.svg" alt=""> Oceanbank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-shb.svg" alt=""> SHB
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-msb.svg" alt=""> Maritime Bank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-seab.svg" alt=""> SeABank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-abb.svg" alt=""> ABBank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-tpb.svg" alt=""> TPBank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-sgcb.svg" alt=""> TMCP Sài Gòn
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-lpb.svg" alt=""> Liên Việt Post Bank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-sgb.svg" alt=""> SaigonBank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-ocb.svg" alt=""> OCB
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-nab.svg" alt=""> Nam Á Bank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-vab.svg" alt=""> Việt Á Bank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-bvb.svg" alt=""> Bảo Việt Bank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-gpb.svg" alt=""> GPBank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-bab.svg" alt=""> Bắc Á Bank
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+
+            <a href="#" class="bank-item">
+                <img src="~/zpgateway/images/bank-vccb.svg" alt=""> Ngân hàng Bản Việt
+                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
+            </a>
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Thanh toán</button>
+
     </div>
+}
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/icheck.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_flat-blue',
+            radioClass: 'iradio_flat-blue'
+        });
+
+
+        $(".bank-item").click(function () {
+            $(".bank-item").removeClass("selected");
+            $(this).addClass("selected");
+        });
+    });
+</script>
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            function calculatePrice() {
+                var ngayThue = $('#NgayThue').val();
+                var ngayTra = $('#NgayTra').val();
+
+                if (ngayThue && ngayTra) {
+                    var startDate = new Date(ngayThue);
+                    var endDate = new Date(ngayTra);
+                    var timeDifference = endDate - startDate;
+                    var days = timeDifference / (1000 * 3600 * 24);
+
+                    if (days >= 0) {
+                        var giaThuePerDay = @Model.Xe.GiaThue;
+                        var totalPrice = (days == 0 ? giaThuePerDay : giaThuePerDay * days);
+                        $('#GiaThue').text(totalPrice.toLocaleString('vi-VN') + ' VNĐ');
+                        $('input[name="SoTien"]').val(totalPrice);
+                    } else {
+                        $('#GiaThue').text('Ngày trả phải sau ngày thuê');
+                    }
+                }
+            }
+
+            $('#NgayThue, #NgayTra').change(function () {
+                calculatePrice();
+            });
+
+            $('#applyDiscount').on('click', function () {
+                var discountCode = $('#discountCode').val();
+                var totalAmountElement = $('#GiaThue');
+                var originalAmount = parseFloat($('input[name="SoTien"]').val());
+
+                $.ajax({
+                    url: '@Url.Action("ApplyDiscount", "Payment")',
+                    type: 'POST',
+                    data: {
+                        discountCode: discountCode,
+                        SoTien: originalAmount,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            var discountedAmount = response.discountedAmount;
+                            var formattedAmount = discountedAmount.toLocaleString('vi-VN') + " VNĐ";
+                            totalAmountElement.text(formattedAmount);
+                            $('input[name="SoTien"]').val(discountedAmount.toFixed(2));
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert('Đã xảy ra lỗi.');
+                    }
+                });
+            });
+        });
+    </script>
 }

@@ -4,7 +4,6 @@
 }
 @{var guest = Session["KhachHang"] as Mioto.Models.KhachHang;}
 @{var chuxe = Session["ChuXe"] as Mioto.Models.ChuXe;}
-@{var gplx = Session["GPLX"] as Mioto.Models.GPLX;}
 <!--User profile-->
 <div class="content-item user-profile">
     <div class="title">
@@ -43,7 +42,7 @@
                         <input type="file" name="avatar" id="avatarUpload" accept="image/*" style="display: none;" onchange="this.form.submit();">
                     </div>
                 </form>
-                <h6>@chuxe.Ten</h6>
+                <h6>@guest.Ten</h6>
             }
         </div>
 
@@ -130,9 +129,9 @@
                 </div>
                 <div class="wrap-input disabled">
                     <div class="wrap-text">
-                        @if (guest.SoGPLX != "No")
+                        @if (guest.GPLX != "No")
                         {
-                            <input disabled="" type="text" placeholder="@guest.SoGPLX" value="">
+                            <input disabled="" type="text" placeholder="@guest.GPLX" value="">
                         }
                         else
                         {
@@ -216,7 +215,7 @@
                     <div class="wrap-text">
                         @if (guest.CCCD != "No")
                         {
-                            <input disabled="" type="text" placeholder="@guest.SoGPLX" value="">
+                            <input disabled="" type="text" placeholder="@guest.GPLX" value="">
                         }
                         else
                         {

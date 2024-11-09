@@ -34,7 +34,7 @@ namespace Mioto.Models
 
         [Required(ErrorMessage = "Vui lòng nhập địa chỉ.")]
         [StringLength(255, ErrorMessage = "Địa chỉ không được vượt quá 255 ký tự.")]
-        public string DiaChi { get; set; } 
+        public string DiaChi { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập mật khẩu của bạn.")]
         [DataType(DataType.Password)]

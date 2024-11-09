@@ -17,17 +17,17 @@ namespace Mioto.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public MaGiamGia()
         {
-            this.ThanhToan = new HashSet<ThanhToan>();
+            this.DonThueXe = new HashSet<DonThueXe>();
         }
     
         public int IDMGG { get; set; }
-        public string Ma { get; set; }
+        public string MaGG { get; set; }
         public int PhanTramGiam { get; set; }
         public System.DateTime NgayBatDau { get; set; }
         public System.DateTime NgayKetThuc { get; set; }
-        public int SoLanSuDung { get; set; }
+        public int SoLuong { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ThanhToan> ThanhToan { get; set; }
+        public virtual ICollection<DonThueXe> DonThueXe { get; set; }
     }
 }
