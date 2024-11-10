@@ -8,8 +8,6 @@
 }
 
 body {
-    padding: 15px;
-    background-color: #ddc3c3;
 }
 
 .container {
@@ -135,12 +133,10 @@ img {
 }
 
 .h4 {
-    font-family: 'Work Sans', sans-serif !important;
     font-weight: 800 !important;
 }
 
 .textmuted,
 h5,
 .text-muted {
-    font-family: 'Poppins', sans-serif;
 }

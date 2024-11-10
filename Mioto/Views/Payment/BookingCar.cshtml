@@ -3,167 +3,21 @@
 @{
     ViewBag.Title = "Booking Car";
     Layout = "~/Views/Shared/_LayoutBase.cshtml";
+    var khachhang = Session["KhachHang"] as Mioto.Models.KhachHang;
 }
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" rel="stylesheet" />
+<link href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" rel="stylesheet" />
 <link rel="stylesheet" href="~/zpgateway/css/bootstrap.min.css">
 <link rel="stylesheet" href="~/zpgateway/css/blue.css">
-<title>ZaloPay Gateway | Quy Cách</title>
-
+<link href="~/Content/css/form_payment.css" rel="stylesheet" />
+<script src="~/zpgateway//js/jquery.min.js"></script>
+<script src="~/zpgateway//js/bootstrap.min.js"></script>
+<script src="~/zpgateway//js/icheck.min.js"></script>
+<script src="~/Scripts/Payment/main.js"></script>
 <style>
-    body {
-        background-color: #f5f5f5;
-        color: #333;
-        line-height: 1.6;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    .booking-wrapper {
-        max-width: 1000px;
-        margin: 40px auto;
-        background: #fff;
-        padding: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
-    }
-
-    .booking-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-    }
-
-    .booking-section {
-        flex: 1;
-        min-width: 300px;
-        background: #f9f9f9;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-
-    .section-title {
-        font-size: 20px;
-        color: #007BFF;
-        margin-bottom: 15px;
-        border-bottom: 2px solid #007BFF;
-        display: inline-block;
-    }
-
-    .booking-details dt {
-        font-weight: bold;
-        margin-top: 10px;
-        color: #555;
-    }
-
-    .booking-details dd {
-        margin-left: 20px;
-        margin-bottom: 10px;
-        color: #666;
-    }
-
-    .form-group {
-        margin-top: 20px;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 10px;
-        margin: 5px 0;
-        box-sizing: border-box;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-
-    .btn-primary {
-        background-color: #007BFF;
-        border: none;
-        color: white;
-        padding: 10px 20px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin-top: 20px;
-        border-radius: 4px;
-        cursor: pointer;
-        width: 100%;
-    }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-
-    .text-danger {
-        color: #d9534f;
-    }
-
-    .payment-form {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #f9f9f9;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    label {
-        font-weight: bold;
-        margin-bottom: 5px;
-        display: block;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 10px;
-        font-size: 16px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        margin-bottom: 10px;
-    }
-
-    .btn {
-        padding: 10px 20px;
-        font-size: 16px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .btn-primary {
-        background-color: #007bff;
-        border: none;
-        color: white;
-    }
-
-    .btn-secondary {
-        background-color: #6c757d;
-        border: none;
-        color: white;
-    }
-
-    h6 {
-        margin-top: 0;
-        margin-bottom: 5px;
-        font-weight: bold;
-    }
-
-    p {
-        font-size: 18px;
-        color: #333;
-    }
-
-    #totalAmount {
-        font-size: 20px;
-        font-weight: bold;
-        color: #007bff;
-    }
-
     .icheckbox_flat-blue, .iradio_flat-blue {
         top: -2px;
         margin-right: 5px;
@@ -172,386 +26,306 @@
     .txtGray {
         color: #798594;
     }
-
-    .bank-group {
-        margin-left: 30px;
-        max-width: 850px;
-    }
-
-    a, a:hover, a:visited, a:link {
-        text-decoration: none !important;
-        color: #293C56;
-    }
-
-        a.bank-item {
-            display: inline-block;
-            width: 180px;
-            height: 48px;
-            padding: 10px;
-            border-radius: 4px;
-            border: 2px solid #f1f1f1;
-            position: relative;
-            vertical-align: top;
-            margin-right: 10px;
-            margin-bottom: 15px;
-            font-size: 13px;
-        }
-
-            a.bank-item .checkmark {
-                display: none;
-                width: 20px;
-                height: 20px;
-            }
-
-            a.bank-item.selected .checkmark {
-                display: block;
-                position: absolute;
-                top: -10px;
-                right: -10px;
-                margin-right: 0;
-            }
-
-            a.bank-item.selected, a.bank-item:hover {
-                border: 2px solid #04BE04;
-            }
-
-            a.bank-item img {
-                vertical-align: middle !important;
-                display: inline-block;
-                margin-right: 5px;
-            }
 </style>
-
-@using (Html.BeginForm("BookingCar", "Payment", FormMethod.Post))
+@using (Html.BeginForm("BookingCar", "Payment", FormMethod.Post, new { id = "bookingForm" }))
 {
     @Html.AntiForgeryToken()
+    <div class="container">
+        <div class="row m-0">
+            <div class="col-lg-7 pb-5 pe-lg-5">
+                <div class="row">
+                    <div class="col-12 p-5">
+                        <img src="@Url.Content("~/CarImages/" + (Model.Xe.HinhAnh ?? "DefaultAvatar.jpg"))" alt="">
+                        @Html.HiddenFor(model => model.Xe.HinhAnh)
+                    </div>
+                    <div class="row m-0 bg-light">
+                        <p class="h5 m-0" style="display:none;">@Model.KhachHang.Ten</p>
+                        @Html.HiddenFor(model => model.KhachHang.Ten, new { style = "display:none;" })
 
-    <div class="booking-wrapper">
-        <div class="booking-container">
-            <div class="booking-section">
-                <h4 class="section-title">Thông tin xe</h4>
-                <dl class="booking-details">
-                    <dt>Biển số xe</dt>
-                    <dd>@Model.Xe.BienSo</dd>
-                    @Html.HiddenFor(model => model.Xe.BienSo)
+                        <p class="h5 m-0" style="display:none;">@Model.KhachHang.HinhAnh</p>
+                        @Html.HiddenFor(model => model.KhachHang.HinhAnh, new { style = "display:none;" })
 
-                    <dt>Hãng xe</dt>
-                    <dd>@Model.Xe.HangXe</dd>
-                    @Html.HiddenFor(model => model.Xe.HangXe)
+                        <p class="h5 m-0" style="display:none;">@Model.KhachHang.Email</p>
+                        @Html.HiddenFor(model => model.KhachHang.Email, new { style = "display:none;" })
+                        
+                        <p class="h5 m-0" style="display:none;">@Model.KhachHang.IDKH</p>
+                        @Html.HiddenFor(model => model.KhachHang.IDKH, new { style = "display:none;", id = "customerID" })
 
-                    <dt>Mẫu xe</dt>
-                    <dd>@Model.Xe.Mau</dd>
-                    @Html.HiddenFor(model => model.Xe.Mau)
+                        <p class="h5 m-0"  style="display:none;">@Model.KhachHang.DiaChi</p>
+                        @Html.HiddenFor(model => model.KhachHang.DiaChi, new { style = "display:none;" })
 
-                    <dt>Số ghế</dt>
-                    <dd>@Model.Xe.SoGhe</dd>
-                    @Html.HiddenFor(model => model.Xe.SoGhe)
+                        <p class="h5 m-0" style="display:none;">@Model.KhachHang.GPLX</p>
+                        @Html.HiddenFor(model => model.KhachHang.GPLX, new { style = "display:none;" })
 
-                    <dt>Tính năng</dt>
-                    <dd>@Model.Xe.TinhNang</dd>
-                    @Html.HiddenFor(model => model.Xe.TinhNang)
+                        <p class="h5 m-0"  style="display:none;">@Model.KhachHang.SDT</p>
+                        @Html.HiddenFor(model => model.KhachHang.SDT, new { style = "display:none;" })
 
-                    <dt>Giá thuê</dt>
-                    <dd>@Model.Xe.GiaThue.ToString("N0") VNĐ</dd>
-                    @Html.HiddenFor(model => model.Xe.GiaThue)
+                        <p class="h5 m-0" style="display:none;">@{Model.KhachHang.IDKH = khachhang.IDKH;}</p>
+                        @Html.HiddenFor(model => model.KhachHang.IDKH, new { style = "display:none;" })
 
-                    <dt>Năm sản xuất</dt>
-                    <dd>@Model.Xe.NamSX</dd>
-                    @Html.HiddenFor(model => model.Xe.NamSX)
+                        <p class="h5 m-0"  style="display:none;">@Model.KhachHang.NgaySinh</p>
+                        @Html.HiddenFor(model => model.KhachHang.NgaySinh, new { style = "display:none;" })
 
-                    <dt>Khu vực</dt>
-                    <dd>@Model.Xe.KhuVuc</dd>
-                    @Html.HiddenFor(model => model.Xe.KhuVuc)
+                        <p class="h5 m-0"  style="display:none;">@Model.KhachHang.CCCD</p>
+                        @Html.HiddenFor(model => model.KhachHang.CCCD, new { style = "display:none;" })
 
-                    <dt>Trạng thái</dt>
-                    <dd>@Model.Xe.TrangThaiThue</dd>
-                    @Html.HiddenFor(model => model.Xe.TrangThaiThue)
-                </dl>
+                        <p class="h5 m-0" style="display:none;">@Model.KhachHang.HinhAnh</p>
+                        @Html.HiddenFor(model => model.KhachHang.HinhAnh, new { style = "display:none;" })
+
+                        <p class="h5 m-0" style="display:none;">@Model.KhachHang.GioiTinh</p>
+                        @Html.HiddenFor(model => model.KhachHang.GioiTinh, new { style = "display:none;" })
+
+                        <p class="h5 m-0"  style="display:none;">@Model.KhachHang.MatKhau</p>
+                        @Html.HiddenFor(model => model.KhachHang.MatKhau, new { style = "display:none;" })
+
+                        <p class="h5 m-0"  style="display:none;">@Model.Xe.TrangThaiThue</p>
+                        @Html.HiddenFor(model => model.Xe.TrangThaiThue, new { style = "display:none;" })
+
+                        <p class="h5 m-0"  style="display:none;">@Model.Xe.DonGiaVanChuyen</p>
+                        @Html.HiddenFor(model => model.Xe.DonGiaVanChuyen, new { style = "display:none;" })
+
+                        <p class="h5 m-0"  style="display:none;">@Model.Xe.IDCX</p>
+                        @Html.HiddenFor(model => model.Xe.IDCX, new { style = "display:none;" })
+
+                        <p class="h5 m-0"  style="display:none;">@Model.Xe.NamSX</p>
+                        @Html.HiddenFor(model => model.Xe.NamSX, new { style = "display:none;" })
+
+                        <div class="col-md-4 col-6 ps-30 my-4">
+                            <p class="text-muted">Hãng Xe</p>
+                            <p class="h5 m-0">@Model.Xe.HangXe</p>
+                            @Html.HiddenFor(model => model.Xe.HangXe)
+                        </div>
+                        <div class="col-md-4 col-6 ps-30 my-4">
+                            <p class="text-muted">Biển số</p>
+                            <p class="h5 m-0" id="number_car">@Model.Xe.BienSo</p>
+                            @Html.HiddenFor(model => model.Xe.BienSo)
+                        </div>
+                        <div class="col-md-4 col-6 ps-30 pe-0 my-4">
+                            <p class="text-muted">Màu xe</p>
+                            <p class="h5">@Model.Xe.Mau</p>
+                            @Html.HiddenFor(model => model.Xe.Mau)
+                        </div>
+
+                        <div class="col-md-4 col-6 ps-30 my-4">
+                            <p class="text-muted">Tính năng</p>
+                            <p class="h5 m-0">@Model.Xe.TinhNang</p>
+                            @Html.HiddenFor(model => model.Xe.TinhNang)
+                        </div>
+                        <div class="col-md-4 col-6 ps-30 my-4">
+                            <p class="text-muted">Số ghế</p>
+                            <p class="h5 m-0">@Model.Xe.SoGhe</p>
+                            @Html.HiddenFor(model => model.Xe.SoGhe)
+                        </div>
+                        <div class="col-md-4 col-6 ps-30 my-4">
+                            <p class="text-muted">Khu vực</p>
+                            <p class="h5 m-0">@Model.Xe.KhuVuc</p>
+                            @Html.HiddenFor(model => model.Xe.KhuVuc)
+                        </div>
+                    </div>
+                </div>
             </div>
+            <div class="col-lg-5 p-0 ps-lg-4">
+                <div class="row m-0">
+                    <div class="col-12 px-4">
+                        <div class="d-flex align-items-end mt-4 mb-2">
+                            <p class="h4 m-0">
+                                <span class="pe-1">@Model.Xe.HangXe @Model.Xe.NamSX</span>
+                            </p>
+                        </div>
 
-            <div class="booking-section">
-                <h4 class="section-title">Thông tin chủ xe</h4>
-                <dl class="booking-details">
-                    <dt>Họ tên</dt>
-                    <dd>@Model.KhachHang.Ten</dd>
-                    @Html.HiddenFor(model => model.KhachHang.Ten)
+                        <div style="display:flex; justify-content: space-between">
+                            <div class="form-group">
+                                <strong>Ngày thuê</strong>
+                                @Html.EditorFor(model => model.NgayThue, new { htmlAttributes = new { @class = "form-control", id = "NgayThue" } })
+                                @Html.ValidationMessageFor(model => model.NgayThue, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <strong>Ngày trả</strong>
+                                @Html.EditorFor(model => model.NgayTra, new { htmlAttributes = new { @class = "form-control", id = "NgayTra" } })
+                                @Html.ValidationMessageFor(model => model.NgayTra, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
 
-                    <dt>Email</dt>
-                    <dd>@Model.KhachHang.Email</dd>
-                    @Html.HiddenFor(model => model.KhachHang.Email)
+                        <div class="d-flex justify-content-between mb-2">
+                            <p class="textmuted">Số lượng:</p>
+                            <p class="fs-14">1</p>
+                        </div>
 
-                    <dt>Số điện thoại</dt>
-                    <dd>@Model.KhachHang.SDT</dd>
-                    @Html.HiddenFor(model => model.KhachHang.SDT)
+                        <div class="d-flex justify-content-between mb-2">
+                            <p class="textmuted">Giá tiền thuê/ ngày:</p>
+                            <p class="fs-14">@String.Format("{0:N0} VND", Model.Xe.GiaThue)</p>
+                            @Html.HiddenFor(model => model.Xe.GiaThue)
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <p class="textmuted">Giảm giá:</p>
+                            <p class="fs-14"></p>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <label for="totalAmount" class="textmuted">Tổng tiền:</label>
+                            <span id="GiaThue">0 VNĐ</span>
+                        </div>
+                    </div>
 
-                    <dt>Địa chỉ</dt>
-                    <dd>@Model.KhachHang.DiaChi</dd>
-                    @Html.HiddenFor(model => model.KhachHang.DiaChi)
-                </dl>
+                    <!-- Mã giảm giá -->
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.MaGiamGia.MaGG, "Mã giảm giá")
+                        @Html.TextBoxFor(model => model.MaGiamGia.MaGG, new { @class = "form-control", placeholder = "Nhập mã giảm giá", id = "discountCode" })
+                        <button type="button" class="btn btn-secondary" id="applyDiscount">Áp dụng mã giảm giá</button>
+                    </div>
+
+                    <div class="col-12 px-0">
+                        <div class="row bg-light m-0">
+                            <div class="course_qr">
+                                <img class="course_qr_img" src="" />
+                            </div>
+                        </div>
+                        <div class="row m-0">
+                            <div class="col-12 mb-4 p-0">
+                                <div class="btn btn-primary" id="btn_paid">
+                                    Thanh toán<span class="fas fa-arrow-right ps-2"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button hidden type="submit" class="btn btn-primary" id ="btn-success"style="margin-top: 20px;">THANH TOÁN</button>
+                </div>
             </div>
         </div>
-        <div class="form-group">
-            <strong>Ngày thuê</strong>
-            @Html.EditorFor(model => model.NgayThue, new { htmlAttributes = new { @class = "form-control", id = "NgayThue" } })
-            @Html.ValidationMessageFor(model => model.NgayThue, "", new { @class = "text-danger" })
-        </div>
-        <div class="form-group">
-            <strong>Ngày trả</strong>
-            @Html.EditorFor(model => model.NgayTra, new { htmlAttributes = new { @class = "form-control", id = "NgayTra" } })
-            @Html.ValidationMessageFor(model => model.NgayTra, "", new { @class = "text-danger" })
-        </div>
-
-        <div class="form-group">
-            <label for="discountCode">Mã giảm giá:</label>
-            <input type="text" id="discountCode" name="discountCode" class="form-control" placeholder="Nhập mã giảm giá của bạn" />
-            <button type="button" id="applyDiscount" class="btn btn-primary">Áp dụng mã giảm giá</button>
-        </div>
-
-        <div class="form-group">
-            <label for="totalAmount">Tổng tiền:</label>
-            <span id="GiaThue">0 VNĐ</span>
-        </div>
-
-        <p>Vui lòng chọn hình thức thanh toán:</p>
-        <div class="mb-1">
-            <label><input type="radio" name="iCheck" class="iradio_flat-blue"> Ví <img src="~/zpgateway/images/logo-zalopay.svg" alt=""></label>
-        </div>
-        <div class="mb-1">
-            <label><input type="radio" name="iCheck" class="iradio_flat-blue"> Visa, Mastercard, JCB <span class="txtGray">(qua cổng ZaloPay)</span></label>
-        </div>
-        <div class="mb-1">
-            <label><input type="radio" name="iCheck" class="iradio_flat-blue" checked> Thẻ ATM <span class="txtGray">(qua cổng ZaloPay)</span></label>
-        </div>
-
-        <div class="bank-group">
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-vtb.svg" alt=""> Vietinbank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-varb.svg" alt=""> Agribank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-vcb.svg" alt=""> Vietcombank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-bidv.svg" alt=""> BIDV
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-dab.svg" alt=""> Đông Á Bank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-scb.svg" alt=""> Sacombank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-acb.svg" alt=""> ACB
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-mb.svg" alt=""> MBBank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-tcb.svg" alt=""> Techcombank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-vpb.svg" alt=""> VPBank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-eib.svg" alt=""> Eximbank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-vib.svg" alt=""> VIB
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-hdb.svg" alt=""> HDBank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-ojb.svg" alt=""> Oceanbank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-shb.svg" alt=""> SHB
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-msb.svg" alt=""> Maritime Bank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-seab.svg" alt=""> SeABank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-abb.svg" alt=""> ABBank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-tpb.svg" alt=""> TPBank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-sgcb.svg" alt=""> TMCP Sài Gòn
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-lpb.svg" alt=""> Liên Việt Post Bank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-sgb.svg" alt=""> SaigonBank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-ocb.svg" alt=""> OCB
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-nab.svg" alt=""> Nam Á Bank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-vab.svg" alt=""> Việt Á Bank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-bvb.svg" alt=""> Bảo Việt Bank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-gpb.svg" alt=""> GPBank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-bab.svg" alt=""> Bắc Á Bank
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-
-            <a href="#" class="bank-item">
-                <img src="~/zpgateway/images/bank-vccb.svg" alt=""> Ngân hàng Bản Việt
-                <img src="~/zpgateway/images/check-mark.svg" alt="" class="checkmark">
-            </a>
-        </div>
-
-
-        <button type="submit" class="btn btn-primary">Thanh toán</button>
-
     </div>
 }
 
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="js/jquery.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/icheck.min.js"></script>
-
-<script>
-    $(document).ready(function () {
-        $('input').iCheck({
-            checkboxClass: 'icheckbox_flat-blue',
-            radioClass: 'iradio_flat-blue'
-        });
-
-
-        $(".bank-item").click(function () {
-            $(".bank-item").removeClass("selected");
-            $(this).addClass("selected");
-        });
-    });
-</script>
 @section Scripts {
     <script type="text/javascript">
-        $(document).ready(function () {
-            function calculatePrice() {
-                var ngayThue = $('#NgayThue').val();
-                var ngayTra = $('#NgayTra').val();
+        function cleanDate(dateString) {
+            var cleanedDate = dateString.replace(/[^0-9/]/g, '');
+            if (cleanedDate.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/)) {
+                return cleanedDate;
+            }
+            return null;
+        }
 
-                if (ngayThue && ngayTra) {
-                    var startDate = new Date(ngayThue);
-                    var endDate = new Date(ngayTra);
-                    var timeDifference = endDate - startDate;
-                    var days = timeDifference / (1000 * 3600 * 24);
+    $(document).ready(function () {
+        function calculatePrice() {
+            var ngayThue = $('#NgayThue').val();
+            var ngayTra = $('#NgayTra').val();
 
-                    if (days >= 0) {
-                        var giaThuePerDay = @Model.Xe.GiaThue;
-                        var totalPrice = (days == 0 ? giaThuePerDay : giaThuePerDay * days);
-                        $('#GiaThue').text(totalPrice.toLocaleString('vi-VN') + ' VNĐ');
-                        $('input[name="SoTien"]').val(totalPrice);
-                    } else {
-                        $('#GiaThue').text('Ngày trả phải sau ngày thuê');
-                    }
+            if (ngayThue && ngayTra) {
+                var startDate = new Date(ngayThue + "T00:00:00");
+                var endDate = new Date(ngayTra + "T00:00:00");
+                var timeDifference = endDate - startDate;
+
+                if (timeDifference == 0) { var days = 1; }
+                days = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+                if (days >= 0) {
+                    var giaThuePerDay = @Model.Xe.GiaThue;
+                    var totalPrice = (days === 0 ? giaThuePerDay : giaThuePerDay * days);
+                    $('#GiaThue').text(totalPrice.toLocaleString('vi-VN') + ' VNĐ');
+                    $('input[name="SoTien"]').val(totalPrice);
+                } else {
+                    $('#GiaThue').text('Ngày trả phải sau ngày thuê');
                 }
             }
+        }
 
-            $('#NgayThue, #NgayTra').change(function () {
-                calculatePrice();
-            });
-
-            $('#applyDiscount').on('click', function () {
-                var discountCode = $('#discountCode').val();
-                var totalAmountElement = $('#GiaThue');
-                var originalAmount = parseFloat($('input[name="SoTien"]').val());
-
-                $.ajax({
-                    url: '@Url.Action("ApplyDiscount", "Payment")',
-                    type: 'POST',
-                    data: {
-                        discountCode: discountCode,
-                        SoTien: originalAmount,
-                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            var discountedAmount = response.discountedAmount;
-                            var formattedAmount = discountedAmount.toLocaleString('vi-VN') + " VNĐ";
-                            totalAmountElement.text(formattedAmount);
-                            $('input[name="SoTien"]').val(discountedAmount.toFixed(2));
-                        } else {
-                            alert(response.message);
-                        }
-                    },
-                    error: function () {
-                        alert('Đã xảy ra lỗi.');
-                    }
-                });
-            });
+        $('#NgayThue, #NgayTra').on('change', function () {
+            calculatePrice();
         });
+
+    $('#applyDiscount').click(function () {
+        var discountCode = $('#discountCode').val();
+        var totalPrice = parseInt($('#GiaThue').text().replace(/\D/g, ''), 10);
+
+        if (discountCode) {
+            $.ajax({
+                url: '@Url.Action("ApplyDiscount", "Payment")',
+                type: 'POST',
+                data: { discountCode: discountCode, totalPrice: totalPrice },
+                success: function (data) {
+                    if (data.success) {
+                        var discountedPrice = data.newTotalPrice;
+                        $('#GiaThue').text(discountedPrice.toLocaleString('vi-VN') + ' VNĐ');
+                        $('input[name="SoTien"]').val(discountedPrice);
+                        alert('Mã giảm giá đã được áp dụng!');
+                    } else {
+                        alert('Mã giảm giá không hợp lệ!');
+                    }
+                },
+                error: function () {
+                    alert('Có lỗi xảy ra, vui lòng thử lại!');
+                }
+            });
+        } else {
+            alert('Vui lòng nhập mã giảm giá!');
+        }
+    });
+
+        $('#btn_paid').click(function () {
+            var giaThueText = document.getElementById("GiaThue").textContent;
+            var giaThue = parseInt(giaThueText.replace(/\D/g, ''), 10);
+
+            var ngayThue = $('#NgayThue').val();
+            var ngayTra = $('#NgayTra').val();
+
+            ngayThue = ngayThue.replace(/-/g, '');
+            ngayTra = ngayTra.replace(/-/g, '');
+
+
+            var customerID = $('#customerID').val();
+            var numberCar = $('#number_car').text();
+            var cleanNumberCar = numberCar.replace(/-/g, '');
+
+            var paidContent = `${customerID} ${cleanNumberCar} ${ngayThue}`;
+            if (giaThue != 0) {
+                var qrUrl = `https://img.vietqr.io/image/TCB-19071843431017-compact2.png?amount=${giaThue}&addInfo=${encodeURIComponent(paidContent)}&accountName=Nguyen%20Viet%20Anh`;
+
+                $('.course_qr_img').attr('src', qrUrl);
+
+                $('#btn_paid').text("Xác thực đã thanh toán");
+
+                setTimeout(function () {
+                    setInterval(() => {
+                        checkPaid(giaThue, paidContent);
+                    }, 1000)
+                }, 10000);
+            }
+            else {
+                alert("Giá thuê phải > 0")
+            }
+           
+        });
+    });
+
+        // Kiểm tra giao dịch
+        let isSuccess = false;
+        async function checkPaid(price, content) {
+            if (isSuccess) {
+                return
+            }
+            else {
+                try {
+                    const response = await fetch(
+                        "https://script.google.com/macros/s/AKfycbxqKrSsb2jqpFur0lGIX86-9nHkZ-OSKYLSRTtPVPv7CHGCBbe3ofKzDLWKXCslRMtT/exec"
+                    );
+                    const data = await response.json();
+                    const last_paid = data.data[data.data.length - 1];
+                    last_prices = last_paid["price"];
+                    last_content = last_paid["content"];
+                    console.log(data)
+                    console.log(last_paid)
+                    if (last_prices >= price && last_content.includes(content)) {
+                        console.log("Thanh toán thành công");
+                        isSuccess = true
+                        if (isSuccess) {
+                            document.querySelector('#btn-success').click();
+                        }
+                    } else {
+                        console.log("Thanh toán không thành công");
+                    }
+                } catch {
+                    console.error("Lỗi");
+                }
+            }
+    }
     </script>
 }

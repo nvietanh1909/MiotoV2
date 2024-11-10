@@ -117,7 +117,7 @@ namespace Mioto.Controllers
                         MaGG = model.Ma,
                         PhanTramGiam = model.PhanTramGiam,
                         NgayBatDau = model.NgayBatDau,
-                        NgayKetThuc = model.NgayKetThuc,
+                        NgayKeyThuc = model.NgayKetThuc,
                         SoLuong = model.SolanSuDung
                     };
 
@@ -163,7 +163,7 @@ namespace Mioto.Controllers
                 try
                 {
                     // Kiểm tra điều kiện ngày
-                    if (model.NgayBatDau >= model.NgayKetThuc)
+                    if (model.NgayBatDau >= model.NgayKeyThuc)
                     {
                         ModelState.AddModelError("", "Ngày kết thúc phải lớn hơn ngày bắt đầu.");
                         return View(model);
@@ -180,7 +180,7 @@ namespace Mioto.Controllers
                     existingDiscount.MaGG = model.MaGG;
                     existingDiscount.PhanTramGiam = model.PhanTramGiam;
                     existingDiscount.NgayBatDau = model.NgayBatDau;
-                    existingDiscount.NgayKetThuc = model.NgayKetThuc;
+                    existingDiscount.NgayKeyThuc = model.NgayKeyThuc;
                     existingDiscount.SoLuong = model.SoLuong;
 
                     db.Entry(existingDiscount).State = EntityState.Modified;

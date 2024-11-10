@@ -24,7 +24,7 @@ namespace Mioto.Models
         public string MaGG { get; set; }
         public int PhanTramGiam { get; set; }
         public System.DateTime NgayBatDau { get; set; }
-        public System.DateTime NgayKetThuc { get; set; }
+        public System.DateTime NgayKeyThuc { get; set; }
         public int SoLuong { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

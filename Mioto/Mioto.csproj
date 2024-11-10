@@ -268,15 +268,6 @@
     <Compile Include="Controllers\DetailAccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PaymentController.cs" />
-    <Compile Include="Controllers\ZaloPay\CallbackController.cs" />
-    <Compile Include="Controllers\ZaloPay\GatewayController.cs" />
-    <Compile Include="Controllers\ZaloPay\HistoryController.cs" />
-    <Compile Include="Controllers\ZaloPay\HomeController.cs" />
-    <Compile Include="Controllers\ZaloPay\QuickPayController.cs" />
-    <Compile Include="Controllers\ZaloPay\RedirectController.cs" />
-    <Compile Include="Controllers\ZaloPay\RefundController.cs" />
-    <Compile Include="Controllers\ZaloPay\SubscribeController.cs" />
-    <Compile Include="DAL\ZaloPayDemoContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -331,23 +322,7 @@
     <Compile Include="Models\Xe.cs">
       <DependentUpon>DB_Mioto.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\ZaloPay\Order.cs" />
-    <Compile Include="Models\ZaloPay\Refund.cs" />
-    <Compile Include="PaymentServices\ZaloPay\Extension\Extension.cs" />
-    <Compile Include="PaymentServices\ZaloPay\Crypto\HmacHelper.cs" />
-    <Compile Include="PaymentServices\ZaloPay\Crypto\RSAHelper.cs" />
-    <Compile Include="PaymentServices\ZaloPay\HttpHelper.cs" />
-    <Compile Include="PaymentServices\ZaloPay\Models\BankDTO.cs" />
-    <Compile Include="PaymentServices\ZaloPay\Models\CallbackRequest.cs" />
-    <Compile Include="PaymentServices\ZaloPay\Models\OrderData.cs" />
-    <Compile Include="PaymentServices\ZaloPay\Models\RefundData.cs" />
-    <Compile Include="PaymentServices\ZaloPay\NgrokHelper.cs" />
-    <Compile Include="PaymentServices\ZaloPay\QRCodeHelper.cs" />
-    <Compile Include="PaymentServices\ZaloPay\Util.cs" />
-    <Compile Include="PaymentServices\ZaloPay\ZaloPayHelper.cs" />
-    <Compile Include="PaymentServices\ZaloPay\ZaloPayMacGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils\Storage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AvatarAdmin\DefaultAvatar.jpg" />
@@ -405,6 +380,7 @@
     <Content Include="Content\bootstrap-grid.rtl.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
+    <Content Include="Scripts\Payment\main.js" />
     <Content Include="zpgateway\css\blue%402x.png" />
     <Content Include="zpgateway\css\blue.css" />
     <Content Include="zpgateway\css\blue.png" />
@@ -482,6 +458,7 @@
     <Content Include="zpgateway\js\flat\_all.css" />
     <Content Include="zpgateway\js\icheck.min.js" />
     <Content Include="zpgateway\js\jquery.min.js" />
+    <Content Include="zpgateway\quycach1.html" />
     <Content Include="zpgateway\quycach2.html" />
     <EntityDeploy Include="Models\DB_Mioto.edmx">
       <Generator>EntityModelCodeGenerator</Generator>

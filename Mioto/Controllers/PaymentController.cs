@@ -118,7 +118,6 @@ namespace Mioto.Controllers
             if (!IsLoggedIn)
                 return RedirectToAction("Login", "Account");
 
-            var khachHang = Session["KhachHang"] as KhachHang;
             if (!ModelState.IsValid)
             {
                 foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
@@ -149,7 +148,7 @@ namespace Mioto.Controllers
             if (!string.IsNullOrEmpty(bookingCar.MaGiamGia?.MaGG))
             {
                 discount = db.MaGiamGia.FirstOrDefault(m => m.MaGG == bookingCar.MaGiamGia.MaGG);
-                if (discount == null || discount.SoLuong <= 0 || discount.NgayKetThuc < DateTime.Now)
+                if (discount == null || discount.SoLuong <= 0 || discount.NgayKeyThuc < DateTime.Now)
                 {
                     ModelState.AddModelError("", "Mã giảm giá không hợp lệ hoặc đã hết hạn.");
                     return View(bookingCar);
@@ -168,12 +167,12 @@ namespace Mioto.Controllers
             // Lưu đơn hàng vào cơ sở dữ liệu
             var donThueXe = new DonThueXe
             {
-                IDKH = khachHang.IDKH,
+                IDKH = bookingCar.KhachHang.IDKH,
                 IDMGG = discount?.IDMGG ?? 0,
                 BienSo = bookingCar.Xe.BienSo,
                 NgayThue = bookingCar.NgayThue,
                 NgayTra = bookingCar.NgayTra,
-                TrangThaiThanhToan = 0, // Chưa thanh toán
+                TrangThaiThanhToan = 1,
                 PhanTramHoaHong = 10,
                 TongTien = discountedAmount
             };
@@ -193,50 +192,25 @@ namespace Mioto.Controllers
 
 
         [HttpPost]
-        public JsonResult ApplyDiscount(string code, decimal SoTien)
+        public JsonResult ApplyDiscount(string discountCode, decimal totalPrice)
         {
-            var khachhang = Session["KhachHang"] as KhachHang;
-            if (khachhang == null)
-            {
-                return Json(new { success = false, message = "Phiên làm việc không hợp lệ. Vui lòng đăng nhập lại." });
-            }
+            var discount = db.MaGiamGia.FirstOrDefault(m => m.MaGG == discountCode && m.NgayKeyThuc >= DateTime.Now);
 
-            var donThueXe = db.DonThueXe.FirstOrDefault(t => t.IDKH == khachhang.IDKH);
-            if (donThueXe == null)
+            if (discount != null)
             {
-                return Json(new { success = false, message = "Không tìm thấy đơn thuê xe cho khách hàng này." });
-            }
-
-            var discount = db.MaGiamGia.FirstOrDefault(m => m.MaGG == code);
-            if (discount == null)
-            {
-                return Json(new { success = false, message = "Mã giảm giá không tồn tại." });
-            }
-            else if (discount.SoLuong <= 0)
-            {
-                return Json(new { success = false, message = "Mã giảm giá đã hết lần sử dụng." });
-            }
-            else if (discount.NgayKetThuc < DateTime.Now)
-            {
-                return Json(new { success = false, message = "Mã giảm giá đã hết hạn." });
-            }
-            else
-            {
-                var hasUsedCode = db.DonThueXe.Any(t => t.IDMGG == discount.IDMGG && t.IDTX == donThueXe.IDTX);
-                if (hasUsedCode)
-                {
-                    return Json(new { success = false, message = "Bạn đã sử dụng mã giảm giá này." });
-                }
-
                 discount.SoLuong--;
                 db.Entry(discount).State = EntityState.Modified;
                 db.SaveChanges();
 
-                var discountedAmount = SoTien - (SoTien * discount.PhanTramGiam / 100);
-                if (discountedAmount < 0) discountedAmount = 0;
-
-                return Json(new { success = true, discountedAmount = discountedAmount.ToString("N0") });
+                decimal discountAmount = totalPrice * (discount.PhanTramGiam / 100);
+                decimal newTotalPrice = totalPrice - discountAmount;
+                return Json(new { success = true, newTotalPrice = newTotalPrice });
             }
+            else
+            {
+                return Json(new { success = false });
+            }
+
         }
     }
 }
