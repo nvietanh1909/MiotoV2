@@ -323,10 +323,9 @@ namespace Mioto.Controllers
                     existingDonThueXe.TrangThaiThanhToan = 1;
                     db.Entry(existingDonThueXe).State = EntityState.Modified;
                     db.SaveChanges();
+                    return View();
                 }
-                return RedirectToAction("CongratulationPaymentDone", "Payment", new { status = "success" });
             }
-
             return View("Error");
         }
     }

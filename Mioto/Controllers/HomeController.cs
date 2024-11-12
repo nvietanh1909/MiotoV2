@@ -48,7 +48,6 @@ namespace Mioto.Controllers
                 Session["StartDateTime"] = startTime;
                 Session["EndDateTime"] = endTime;
             }
-            var xe = db.Xe.Where(x => x.IDCX == ChuXe.IDCX);
             var ds_xe = db.Xe.Where(x => x.KhuVuc == khuvuc && x.TrangThaiThue == "Sẵn sàng").ToList();
 
             var tokenFile = "C:\\Program Files\\IIS Express\\Json\\tokens.json";
