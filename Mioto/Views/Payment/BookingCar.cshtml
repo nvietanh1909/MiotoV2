@@ -1,4 +1,4 @@
-﻿@model Mioto.Models.MD_BookingCar
+﻿﻿@model Mioto.Models.MD_BookingCar
 
 @{
     ViewBag.Title = "Booking Car";
@@ -47,26 +47,26 @@
 
                         <p class="h5 m-0" style="display:none;">@Model.KhachHang.Email</p>
                         @Html.HiddenFor(model => model.KhachHang.Email, new { style = "display:none;" })
-                        
+
                         <p class="h5 m-0" style="display:none;">@Model.KhachHang.IDKH</p>
                         @Html.HiddenFor(model => model.KhachHang.IDKH, new { style = "display:none;", id = "customerID" })
 
-                        <p class="h5 m-0"  style="display:none;">@Model.KhachHang.DiaChi</p>
+                        <p class="h5 m-0" style="display:none;">@Model.KhachHang.DiaChi</p>
                         @Html.HiddenFor(model => model.KhachHang.DiaChi, new { style = "display:none;" })
 
                         <p class="h5 m-0" style="display:none;">@Model.KhachHang.GPLX</p>
                         @Html.HiddenFor(model => model.KhachHang.GPLX, new { style = "display:none;" })
 
-                        <p class="h5 m-0"  style="display:none;">@Model.KhachHang.SDT</p>
+                        <p class="h5 m-0" style="display:none;">@Model.KhachHang.SDT</p>
                         @Html.HiddenFor(model => model.KhachHang.SDT, new { style = "display:none;" })
 
                         <p class="h5 m-0" style="display:none;">@{Model.KhachHang.IDKH = khachhang.IDKH;}</p>
                         @Html.HiddenFor(model => model.KhachHang.IDKH, new { style = "display:none;" })
 
-                        <p class="h5 m-0"  style="display:none;">@Model.KhachHang.NgaySinh</p>
+                        <p class="h5 m-0" style="display:none;">@Model.KhachHang.NgaySinh</p>
                         @Html.HiddenFor(model => model.KhachHang.NgaySinh, new { style = "display:none;" })
 
-                        <p class="h5 m-0"  style="display:none;">@Model.KhachHang.CCCD</p>
+                        <p class="h5 m-0" style="display:none;">@Model.KhachHang.CCCD</p>
                         @Html.HiddenFor(model => model.KhachHang.CCCD, new { style = "display:none;" })
 
                         <p class="h5 m-0" style="display:none;">@Model.KhachHang.HinhAnh</p>
@@ -75,19 +75,19 @@
                         <p class="h5 m-0" style="display:none;">@Model.KhachHang.GioiTinh</p>
                         @Html.HiddenFor(model => model.KhachHang.GioiTinh, new { style = "display:none;" })
 
-                        <p class="h5 m-0"  style="display:none;">@Model.KhachHang.MatKhau</p>
+                        <p class="h5 m-0" style="display:none;">@Model.KhachHang.MatKhau</p>
                         @Html.HiddenFor(model => model.KhachHang.MatKhau, new { style = "display:none;" })
 
-                        <p class="h5 m-0"  style="display:none;">@Model.Xe.TrangThaiThue</p>
+                        <p class="h5 m-0" style="display:none;">@Model.Xe.TrangThaiThue</p>
                         @Html.HiddenFor(model => model.Xe.TrangThaiThue, new { style = "display:none;" })
 
-                        <p class="h5 m-0"  style="display:none;">@Model.Xe.DonGiaVanChuyen</p>
+                        <p class="h5 m-0" style="display:none;">@Model.Xe.DonGiaVanChuyen</p>
                         @Html.HiddenFor(model => model.Xe.DonGiaVanChuyen, new { style = "display:none;" })
 
-                        <p class="h5 m-0"  style="display:none;">@Model.Xe.IDCX</p>
+                        <p class="h5 m-0" style="display:none;">@Model.Xe.IDCX</p>
                         @Html.HiddenFor(model => model.Xe.IDCX, new { style = "display:none;" })
 
-                        <p class="h5 m-0"  style="display:none;">@Model.Xe.NamSX</p>
+                        <p class="h5 m-0" style="display:none;">@Model.Xe.NamSX</p>
                         @Html.HiddenFor(model => model.Xe.NamSX, new { style = "display:none;" })
 
                         <div class="col-md-4 col-6 ps-30 my-4">
@@ -133,18 +133,26 @@
                             </p>
                         </div>
 
-                        <div style="display:flex; justify-content: space-between">
-                            <div class="form-group">
-                                <strong>Ngày thuê</strong>
-                                @Html.EditorFor(model => model.NgayThue, new { htmlAttributes = new { @class = "form-control", id = "NgayThue" } })
-                                @Html.ValidationMessageFor(model => model.NgayThue, "", new { @class = "text-danger" })
+                        @using (Html.BeginForm("CheckRentalPeriod", "Payment", FormMethod.Get, new { id = "checkRentalForm" }))
+                        {
+                            <div style="display:flex; justify-content: space-between">
+                                <div class="form-group">
+                                    <strong>Ngày thuê</strong>
+                                    @Html.EditorFor(model => model.NgayThue, new { htmlAttributes = new { @class = "form-control", id = "NgayThue" } })
+                                    @Html.ValidationMessageFor(model => model.NgayThue, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <strong>Ngày trả</strong>
+                                    @Html.EditorFor(model => model.NgayTra, new { htmlAttributes = new { @class = "form-control", id = "NgayTra" } })
+                                    @Html.ValidationMessageFor(model => model.NgayTra, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <strong>Ngày trả</strong>
-                                @Html.EditorFor(model => model.NgayTra, new { htmlAttributes = new { @class = "form-control", id = "NgayTra" } })
-                                @Html.ValidationMessageFor(model => model.NgayTra, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
+
+                            <button type="button" id="checkRentalBtn">Kiểm tra kỳ hạn</button>
+                        }
 
                         <div class="d-flex justify-content-between mb-2">
                             <p class="textmuted">Số lượng:</p>
@@ -186,12 +194,36 @@
                                 </div>
                             </div>
                         </div>
+                        <button type="submit" class="btn btn-primary" id="btn-success" style="margin-top: 20px;">Thanh toán</button>
+
                     </div>
-                    <button hidden type="submit" class="btn btn-primary" id ="btn-success"style="margin-top: 20px;">THANH TOÁN</button>
                 </div>
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+        document.getElementById("checkRentalBtn").onclick = function () {
+            document.getElementById("checkRentalForm").submit();
+        };
+
+        document.getElementById("checkRentalBtn").onclick = function () {
+            var form = document.getElementById("checkRentalForm");
+            if (form.checkValidity()) {
+                form.submit();
+            } else {
+                alert("Please fill out the required fields.");
+            }
+        };
+
+        document.getElementById("btn-success").onclick = function () {
+            var form = document.getElementById("bookingForm");
+            if (form.checkValidity()) {
+                form.submit();
+            } else {
+                alert("Please fill out the required fields.");
+            }
+        };
+    </script>
 }
 
 @section Scripts {
@@ -292,7 +324,7 @@
             else {
                 alert("Giá thuê phải > 0")
             }
-           
+
         });
     });
 

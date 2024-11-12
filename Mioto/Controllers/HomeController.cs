@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Mioto.Models;
+using Newtonsoft.Json.Linq;
+using RestSharp;
 
 namespace Mioto.Controllers
 {
@@ -32,23 +34,59 @@ namespace Mioto.Controllers
             return View();
         }
 
-        public ActionResult Car(string khuvuc)
+        public ActionResult Car(string khuvuc, DateTime? startTime, DateTime? endTime)
         {
             var KhachHang = Session["KhachHang"] as KhachHang;
             var ChuXe = Session["ChuXe"] as ChuXe;
+
+            if (startTime == null || endTime == null)
+            {
+                return View();
+            }
+            else
+            {
+                Session["StartDateTime"] = startTime;
+                Session["EndDateTime"] = endTime;
+            }
             var xe = db.Xe.Where(x => x.IDCX == ChuXe.IDCX);
             var ds_xe = db.Xe.Where(x => x.KhuVuc == khuvuc && x.TrangThaiThue == "Sẵn sàng").ToList();
 
-            if (xe == null || KhachHang == null) return View(ds_xe);
+            var tokenFile = "C:\\Program Files\\IIS Express\\Json\\tokens.json";
+            var tokens = JObject.Parse(System.IO.File.ReadAllText(tokenFile));
 
-            if (ChuXe != null)
+            RestClient restClient = new RestClient();
+            RestRequest request = new RestRequest("https://www.googleapis.com/calendar/v3/calendars/primary/events", Method.Get);
+
+            request.AddQueryParameter("key", "AIzaSyDs2PE3cSuieWJalZMbSmoiC0v1NefPvhU");
+            request.AddHeader("Authorization", "Bearer " + tokens["access_token"]);
+            request.AddHeader("Accept", "application/json");
+
+            var response = restClient.Execute(request);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                ds_xe = db.Xe.Where(x => x.KhuVuc == khuvuc && x.TrangThaiThue == "Sẵn sàng" && x.IDCX != ChuXe.IDCX).ToList();
+                JObject calendarEvents = JObject.Parse(response.Content);
+                var allEvents = calendarEvents["items"]
+                    .Where(eventItem => eventItem["start"]?["dateTime"] != null && eventItem["end"]?["dateTime"] != null)
+                    .Select(eventItem => eventItem.ToObject<Mioto.Models.Events>())
+                    .ToList();
+
+                var filteredEvents = allEvents.Where(e =>
+                {
+                    DateTime eventStart = DateTime.Parse(e.Start.DateTime);
+                    DateTime eventEnd = DateTime.Parse(e.End.DateTime);
+
+                    return (eventStart < endTime && eventEnd > startTime); 
+                }).ToList();
+
+                var rentedCars = filteredEvents.Select(e => e.Summary).ToList();
+                ds_xe = ds_xe.Where(x => !rentedCars.Contains(x.BienSo)).ToList(); 
+
                 return View(ds_xe);
             }
-            else return View(ds_xe);
+            return View("Error");
         }
-
+        
         public ActionResult About()
         {
             return View();
@@ -59,5 +97,9 @@ namespace Mioto.Controllers
             return View();
         }
 
+        public ActionResult Index()
+        {
+            return View();
+        }
     }
 }

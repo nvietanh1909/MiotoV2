@@ -264,9 +264,11 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AuthController.cs" />
+    <Compile Include="Controllers\CalendarEventController.cs" />
     <Compile Include="Controllers\CarController.cs" />
     <Compile Include="Controllers\DetailAccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\OAuthController.cs" />
     <Compile Include="Controllers\PaymentController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -298,6 +300,7 @@
     <Compile Include="Models\DonThueXe.cs">
       <DependentUpon>DB_Mioto.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Events.cs" />
     <Compile Include="Models\KhachHang.cs">
       <DependentUpon>DB_Mioto.tt</DependentUpon>
     </Compile>
@@ -467,7 +470,8 @@
     <Content Include="Models\DB_Mioto.edmx.diagram">
       <DependentUpon>DB_Mioto.edmx</DependentUpon>
     </Content>
-    <Content Include="Json\client_secret.json" />
+    <Content Include="Json\api_calendar.json" />
+    <Content Include="Json\tokens.json" />
     <None Include="Properties\PublishProfiles\nvietanh1909-001-site1 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\nvietanh1909-001-site1 - FTP1.pubxml" />
     <None Include="Properties\PublishProfiles\nvietanh1909-001-site1 - Web Deploy.pubxml" />
@@ -553,11 +557,18 @@
     <Content Include="Scripts\jquery-3.7.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.7.1.min.map" />
     <Content Include="zpgateway\.DS_Store" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\CalendarEvent\CreateEvent.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\CalendarEvent\AllEvents.cshtml" />
+    <Content Include="Views\CalendarEvent\UpdateEvent.cshtml" />
+    <Content Include="Views\Payment\QRPayment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Auth\" />
     <Folder Include="Views\DrivingLicense\" />
+    <Folder Include="Views\OAuth\" />
     <Folder Include="Views\ORC\" />
   </ItemGroup>
   <ItemGroup>

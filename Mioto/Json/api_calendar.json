@@ -1,0 +1,9 @@
+{
+  "client_id": "50714335648-uunlm8l772qjiik65n7eq3akor0kvftc.apps.googleusercontent.com",
+  "project_id": "api-calendar-441313",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_secret": "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",
+  "redirect_uris": [ "https://localhost:44380/oauth/callback" ]
+}

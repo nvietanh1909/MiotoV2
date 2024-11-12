@@ -1,12 +1,21 @@
-﻿using Mioto.Models;
+﻿using Google.Apis.Auth.OAuth2;
+using Google.Apis.Calendar.v3;
+using Google.Apis.Util.Store;
+using Google;
+using Mioto.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
+using Google.Apis.Calendar.v3.Data;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace Mioto.Controllers
 {
@@ -20,6 +29,8 @@ namespace Mioto.Controllers
             if (!IsLoggedIn)
                 return RedirectToAction("Login", "Account");
 
+            var startDateTime = Session["StartDateTime"];
+            var endDateTime = Session["EndDateTime"];
             var khachHang = Session["KhachHang"] as KhachHang;
 
             if (string.IsNullOrEmpty(BienSoXe))
@@ -65,7 +76,8 @@ namespace Mioto.Controllers
                     KhachHang = true
                 };
             }
-
+            Session["StartDateTime"] = startDateTime;
+            Session["EndDateTime"] = endDateTime;
             ViewBag.ErrorMessage = TempData["ErrorMessage"];
             return View(model);
         }
@@ -82,6 +94,8 @@ namespace Mioto.Controllers
             if (!IsLoggedIn)
                 return RedirectToAction("Login", "Account");
 
+            var startDateTime = Session["StartDateTime"];
+            var endDateTime = Session["EndDateTime"];
             var khachHang = Session["KhachHang"] as KhachHang;
             var xe = db.Xe.FirstOrDefault(x => x.BienSo == BienSoXe);
             var chuXe = db.ChuXe.FirstOrDefault(x => x.IDCX == xe.IDCX);
@@ -108,7 +122,27 @@ namespace Mioto.Controllers
                 Xe = xe,
                 KhachHang = _chuXe,
             };
+            Session["StartDateTime"] = startDateTime;
+            Session["EndDateTime"] = endDateTime;
             return View(bookingCarModel);
+        }
+
+        public ActionResult OauthRedirect()
+        {
+            var credentialsFile = "C:\\Program Files\\IIS Express\\Json\\api_calendar.json";
+            JObject credentials = JObject.Parse(System.IO.File.ReadAllText(credentialsFile));
+
+            var client_id = credentials["web"]["client_id"].ToString();
+
+            var redirectUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
+                              "scope=https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events&" +
+                              "access_type=offline&" +
+                              "include_granted_scopes=true&" +
+                              "state=hellothere&" +
+                              "redirect_uri=https://localhost:44380/oauth/callback&" +
+                              "response_type=code&" +
+                              "client_id=" + client_id;
+            return Redirect(redirectUrl);
         }
 
         [HttpPost]
@@ -127,24 +161,14 @@ namespace Mioto.Controllers
                 return View(bookingCar);
             }
 
-            // Kiểm tra tính khả dụng của xe
-            bool isAvailableXe = !db.DonThueXe.Any(d => d.BienSo == bookingCar.Xe.BienSo &&
-                ((d.NgayThue < bookingCar.NgayTra && d.NgayTra > d.NgayThue) ||
-                 (d.NgayThue < bookingCar.NgayThue && d.NgayTra > bookingCar.NgayThue) ||
-                 (d.NgayThue < bookingCar.NgayTra && d.NgayTra > bookingCar.NgayTra)) && d.TrangThaiThanhToan == 1);
-
-            if (!isAvailableXe)
-            {
-                ModelState.AddModelError("", "Xe không còn khả dụng trong khoảng thời gian này.");
-                return View(bookingCar);
-            }
+            var startDateTime = Session["StartDateTime"];
+            var endDateTime = Session["EndDateTime"];
 
             int soNgayThue = Math.Max((bookingCar.NgayTra - bookingCar.NgayThue).Days, 1);
 
             // Kiểm tra mã giảm giá
             decimal discountPercentage = 0;
             MaGiamGia discount = null;
-
             if (!string.IsNullOrEmpty(bookingCar.MaGiamGia?.MaGG))
             {
                 discount = db.MaGiamGia.FirstOrDefault(m => m.MaGG == bookingCar.MaGiamGia.MaGG);
@@ -172,15 +196,16 @@ namespace Mioto.Controllers
                 BienSo = bookingCar.Xe.BienSo,
                 NgayThue = bookingCar.NgayThue,
                 NgayTra = bookingCar.NgayTra,
-                TrangThaiThanhToan = 1,
+                TrangThaiThanhToan = 0,
                 PhanTramHoaHong = 10,
                 TongTien = discountedAmount
             };
-
+            Session["StartDateTime"] = startDateTime;
+            Session["EndDateTime"] = endDateTime;
             db.DonThueXe.Add(donThueXe);
             db.SaveChanges();
 
-            return RedirectToAction("CongratulationPaymentDone", "Payment");
+            return RedirectToAction("QRPayment", "Payment");
         }
 
         public ActionResult CongratulationPaymentDone()
@@ -189,8 +214,37 @@ namespace Mioto.Controllers
                 return RedirectToAction("Login", "Account");
             return View();
         }
+        public ActionResult QRPayment()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        // Phương thức kiểm tra tính hợp lệ của ngày
+        private bool IsValidRentalPeriod(DateTime ngayThue, DateTime ngayTra, string bienSo)
+        {
+            // Kiểm tra nếu ngày trả không được phép nhỏ hơn ngày thuê
+            if (ngayTra <= ngayThue)
+            {
+                ModelState.AddModelError("", "Ngày trả phải sau ngày thuê.");
+                return false;
+            }
 
+            // Kiểm tra nếu đã có xe thuê trong khoảng thời gian đó
+            var existingBooking = db.DonThueXe
+                .FirstOrDefault(d => d.BienSo == bienSo &&
+                                     ((d.NgayThue < ngayTra && d.NgayTra > ngayThue) ||
+                                      (d.NgayThue < ngayThue && d.NgayTra > ngayThue) ||
+                                      (d.NgayThue < ngayTra && d.NgayTra > ngayTra)));
+
+            if (existingBooking != null)
+            {
+                ModelState.AddModelError("", "Xe đã được thuê trong khoảng thời gian này.");
+                return false;
+            }
+
+            return true;
+        }
         [HttpPost]
         public JsonResult ApplyDiscount(string discountCode, decimal totalPrice)
         {

@@ -3,6 +3,8 @@
     ViewBag.Title = "InfoCar";
     Layout = "~/Views/Shared/_LayoutBase.cshtml";
     var khachhang = Session["KhachHang"] as Mioto.Models.KhachHang;
+    var startDateTime = Session["StartDateTime"] as DateTime?;
+    var endDateTime = Session["EndDateTime"] as DateTime?;
 }
 @model Mioto.Models.MD_InfoCar
 <div class="modal-body">
