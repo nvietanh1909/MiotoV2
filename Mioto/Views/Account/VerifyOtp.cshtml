@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "VerifyOtp";
+    Layout = "~/Views/Shared/_LayoutBase.cshtml";
+}
+
+<h2>Xác Thực OTP</h2>
+
+<form method="post" action="@Url.Action("VerifyOtp", "Account")">
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <label for="otp">Nhập mã OTP đã gửi đến email:</label>
+        <input type="text" id="otp" name="otp" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Xác Thực</button>
+</form>

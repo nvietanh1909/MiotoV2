@@ -563,6 +563,7 @@
     <Content Include="Views\CalendarEvent\AllEvents.cshtml" />
     <Content Include="Views\CalendarEvent\UpdateEvent.cshtml" />
     <Content Include="Views\Payment\QRPayment.cshtml" />
+    <Content Include="Views\Account\VerifyOtp.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
