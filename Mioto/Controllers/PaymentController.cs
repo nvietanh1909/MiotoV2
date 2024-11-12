@@ -16,6 +16,10 @@ using System.Xml;
 using Google.Apis.Calendar.v3.Data;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
+using RestSharp;
+using System.Security.Policy;
 
 namespace Mioto.Controllers
 {
@@ -23,6 +27,24 @@ namespace Mioto.Controllers
     {
         private readonly DB_MiotoEntities db = new DB_MiotoEntities();
         public bool IsLoggedIn => Session["KhachHang"] != null || Session["ChuXe"] != null;
+
+        public ActionResult OauthRedirect()
+        {
+            var credentialsFile = "C:\\Program Files\\IIS Express\\Json\\api_calendar.json";
+            JObject credentials = JObject.Parse(System.IO.File.ReadAllText(credentialsFile));
+
+            var client_id = credentials["web"]["client_id"].ToString();
+
+            var redirectUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
+                              "scope=https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events&" +
+                              "access_type=offline&" +
+                              "include_granted_scopes=true&" +
+                              "state=hellothere&" +
+                              "redirect_uri=https://localhost:44380/oauth/callback&" +
+                              "response_type=code&" +
+                              "client_id=" + client_id;
+            return Redirect(redirectUrl);
+        }
 
         public ActionResult InfoCar(string BienSoXe)
         {
@@ -127,24 +149,6 @@ namespace Mioto.Controllers
             return View(bookingCarModel);
         }
 
-        public ActionResult OauthRedirect()
-        {
-            var credentialsFile = "C:\\Program Files\\IIS Express\\Json\\api_calendar.json";
-            JObject credentials = JObject.Parse(System.IO.File.ReadAllText(credentialsFile));
-
-            var client_id = credentials["web"]["client_id"].ToString();
-
-            var redirectUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
-                              "scope=https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events&" +
-                              "access_type=offline&" +
-                              "include_granted_scopes=true&" +
-                              "state=hellothere&" +
-                              "redirect_uri=https://localhost:44380/oauth/callback&" +
-                              "response_type=code&" +
-                              "client_id=" + client_id;
-            return Redirect(redirectUrl);
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult BookingCar(MD_BookingCar bookingCar)
@@ -200,6 +204,7 @@ namespace Mioto.Controllers
                 PhanTramHoaHong = 10,
                 TongTien = discountedAmount
             };
+            Session["DonThueXe"] = donThueXe;
             Session["StartDateTime"] = startDateTime;
             Session["EndDateTime"] = endDateTime;
             db.DonThueXe.Add(donThueXe);
@@ -208,29 +213,16 @@ namespace Mioto.Controllers
             return RedirectToAction("QRPayment", "Payment");
         }
 
-        public ActionResult CongratulationPaymentDone()
-        {
-            if (!IsLoggedIn)
-                return RedirectToAction("Login", "Account");
-            return View();
-        }
-        public ActionResult QRPayment()
-        {
-            return View();
-        }
 
         [HttpPost]
-        // Phương thức kiểm tra tính hợp lệ của ngày
         private bool IsValidRentalPeriod(DateTime ngayThue, DateTime ngayTra, string bienSo)
         {
-            // Kiểm tra nếu ngày trả không được phép nhỏ hơn ngày thuê
             if (ngayTra <= ngayThue)
             {
                 ModelState.AddModelError("", "Ngày trả phải sau ngày thuê.");
                 return false;
             }
 
-            // Kiểm tra nếu đã có xe thuê trong khoảng thời gian đó
             var existingBooking = db.DonThueXe
                 .FirstOrDefault(d => d.BienSo == bienSo &&
                                      ((d.NgayThue < ngayTra && d.NgayTra > ngayThue) ||
@@ -264,7 +256,78 @@ namespace Mioto.Controllers
             {
                 return Json(new { success = false });
             }
+        }
 
+        public ActionResult QRPayment()
+        {
+            if (!IsLoggedIn)
+                return RedirectToAction("Login", "Account");
+
+            var donthuexe = Session["DonThueXe"] as DonThueXe;
+            var info = new Dictionary<string, string> 
+            {
+                {"BANK_ID", "TCB" },
+                {"ACCOUNT_NO", "19071843431017" },
+                {"OWNER", "Nguyen Viet Anh" }
+            };
+            var paidContent = donthuexe.IDTX.ToString();
+
+            string QR = $"https://img.vietqr.io/image/{info["BANK_ID"]}-{info["ACCOUNT_NO"]}-compact2.png?amount={donthuexe.TongTien}&addInfo={paidContent}&accountName={Uri.EscapeDataString(info["OWNER"])}";
+            ViewBag.QRCodeUrl = QR;
+            Session["DonThueXe"] = donthuexe;
+            return View();
+        }
+
+        public ActionResult CongratulationPaymentDone()
+        {
+            if (!IsLoggedIn)
+                return RedirectToAction("Login", "Account");
+
+            var donthuexe = Session["DonThueXe"] as DonThueXe;
+
+            var tokenFile = "C:\\Program Files\\IIS Express\\Json\\tokens.json";
+            var tokens = JObject.Parse(System.IO.File.ReadAllText(tokenFile));
+
+            RestClient restClient = new RestClient();
+            RestRequest request = new RestRequest("https://www.googleapis.com/calendar/v3/calendars/primary/events", Method.Post);
+
+            var formattedNgayThue = donthuexe.NgayThue.ToString("yyyy-MM-dd'T'HH:mm:ss.fffK");
+            var formattedNgayTra = donthuexe.NgayTra.ToString("yyyy-MM-dd'T'HH:mm:ss.fffK");
+
+            var calendarEvent = new
+            {
+                summary = donthuexe.BienSo.ToString(),
+                description = $"Booking for car ID: {donthuexe.IDTX}",
+                start = new { dateTime = formattedNgayThue, timeZone = "UTC" },
+                end = new { dateTime = formattedNgayTra, timeZone = "UTC" }
+            };
+
+            var model = JsonConvert.SerializeObject(calendarEvent, new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            });
+
+            request.AddQueryParameter("key", "AIzaSyDs2PE3cSuieWJalZMbSmoiC0v1NefPvhU");
+            request.AddHeader("Authorization", "Bearer " + tokens["access_token"]);
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.AddParameter("application/json", model, ParameterType.RequestBody);
+
+            var response = restClient.Execute(request);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var existingDonThueXe = db.DonThueXe.Find(donthuexe.IDTX);
+                if (existingDonThueXe != null)
+                {
+                    existingDonThueXe.TrangThaiThanhToan = 1;
+                    db.Entry(existingDonThueXe).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                return RedirectToAction("CongratulationPaymentDone", "Payment", new { status = "success" });
+            }
+
+            return View("Error");
         }
     }
 }

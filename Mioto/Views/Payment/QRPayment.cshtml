@@ -1,8 +1,46 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "QRPayment";
     Layout = "~/Views/Shared/_LayoutBase.cshtml";
+    var donthuexe = Session["DonThueXe"] as Mioto.Models.DonThueXe;
 }
 
-<h2>QRPayment</h2>
+<img class="course_qr_img" src="@ViewBag.QRCodeUrl" alt="QR Code for Payment" />
 
+<form id="successForm" action="@Url.Action("CongratulationPaymentDone", "Payment")" method="post" style="display:none;">
+    <input type="hidden" name="transactionId" value="@donthuexe.IDTX" />
+</form>
+
+<script>
+    let isSuccess = false;
+    const price = @donthuexe.TongTien;
+    const content = "@donthuexe.IDTX";
+
+    async function checkPaid(price, content) {
+        if (isSuccess) {
+            return;
+        }
+        try {
+            const response = await fetch(
+                "https://script.google.com/macros/s/AKfycbxqKrSsb2jqpFur0lGIX86-9nHkZ-OSKYLSRTtPVPv7CHGCBbe3ofKzDLWKXCslRMtT/exec"
+            );
+            const data = await response.json();
+            const last_paid = data.data[data.data.length - 1];
+            const last_price = last_paid["price"];
+            const last_content = last_paid["content"];
+
+            if (last_price >= price && last_content.includes(content)) {
+                console.log("Thanh toán thành công");
+                isSuccess = true;
+                document.querySelector("#successForm").submit(); 
+            } else {
+                console.log("Thanh toán không thành công");
+            }
+        } catch (error) {
+            console.error("Lỗi:", error);
+        }
+    }
+
+    setInterval(() => {
+        checkPaid(price, content);
+    }, 5000);
+</script>

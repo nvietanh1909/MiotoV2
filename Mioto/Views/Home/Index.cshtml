@@ -6,7 +6,7 @@
 <button class="btn btn-primary" onclick="location.href = '@Url.Action("RefreshToken", "OAuth")'">Refresh Access Token</button>
 <button class="btn btn-primary" onclick="location.href = '@Url.Action("RevokeToken", "OAuth")'">Revoke Access Token</button>
 
-<form action="CalendarEvent/CreateEvent" method="post">
+<form action="@Url.Action("CreateEvent", "CalendarEvent")" method="post">
     <div class="row" style="margin: 10px">
         <label for="Summary" class="col-sm-3">Summary:</label>
         <input type="text" class="col-sm-1 form-control" name="Summary" value="" autocomplete="off" />
