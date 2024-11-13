@@ -440,6 +440,7 @@ namespace Mioto.Controllers
         {
             return View();
         }
+
         public ActionResult DeleteRentedCar(int id)
         {
             // Kiểm tra người dùng đã đăng nhập
@@ -486,6 +487,7 @@ namespace Mioto.Controllers
                     IDDT = id,
                     LoaiHuyChuyen = 2, // Chủ xe
                     SoTienHoan = denTien,
+                    ThoiGianHuy = DateTime.Now,
                     MoTa = "Hủy chuyến do chủ xe yêu cầu."
                 };
 
@@ -552,5 +554,118 @@ namespace Mioto.Controllers
             return RedirectToAction("RentedCar");
         }
 
+        public ActionResult DeleteTrip(int id)
+        {
+            // Kiểm tra người dùng đã đăng nhập
+            if (!IsLoggedIn)
+                return RedirectToAction("Login", "Account");
+
+            // Lấy thông tin chuyến thuê xe
+            var donThueXe = db.DonThueXe.FirstOrDefault(x => x.IDTX == id);
+            if (donThueXe == null)
+                return HttpNotFound("Chuyến thuê không tồn tại");
+
+            var currentDateTime = DateTime.Now;
+            var bookingDateTime = donThueXe.TGThanhToan;
+            var timeDifference = (currentDateTime - donThueXe.TGThanhToan).TotalDays;
+
+            // Xác định người dùng hủy chuyến
+            var guest = Session["KhachHang"] as KhachHang;
+
+            decimal hoanTien = 0;
+            if (guest != null)
+            {
+                // Khách hàng hủy chuyến
+                if (currentDateTime <= bookingDateTime.AddHours(1))
+                {
+                    // <= 1 giờ sau giữ chỗ
+                    hoanTien = donThueXe.TongTien; // Hoàn tiền 100%
+                }
+                else if (timeDifference > 7)
+                {
+                    // Hủy trước chuyến đi > 7 ngày
+                    hoanTien = donThueXe.TongTien * 70 / 100; // Hoàn tiền 70%
+                }
+                else
+                {
+                    // Hủy <= 7 ngày trước chuyến đi
+                    hoanTien = 0; // Không hoàn tiền
+                }
+
+                // Lưu thông tin phí hủy chuyến cho khách hàng
+                var phiHuyChuyen = new PhiHuyChuyen
+                {
+                    IDDT = id,
+                    LoaiHuyChuyen = 1, // Khách hàng
+                    ThoiGianHuy = DateTime.Now,
+                    SoTienHoan = hoanTien,
+                    MoTa = "Hủy chuyến do khách hàng yêu cầu."
+                };
+
+                db.PhiHuyChuyen.Add(phiHuyChuyen);
+            }
+            else
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Người dùng không hợp lệ");
+            }
+
+            // Lấy access_token từ file
+            var tokenFile = "C:\\Program Files\\IIS Express\\Json\\tokens.json";
+            var tokens = JObject.Parse(System.IO.File.ReadAllText(tokenFile));
+
+            RestClient restClient = new RestClient();
+            RestRequest request = new RestRequest("https://www.googleapis.com/calendar/v3/calendars/primary/events", Method.Get);
+
+            request.AddQueryParameter("key", "AIzaSyDs2PE3cSuieWJalZMbSmoiC0v1NefPvhU");
+            request.AddHeader("Authorization", "Bearer " + tokens["access_token"]);
+            request.AddHeader("Accept", "application/json");
+
+            var response = restClient.Execute(request);
+            string identify = "";
+
+            // Tìm sự kiện trên Google Calendar
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                JObject calendarEvents = JObject.Parse(response.Content);
+                var allEvents = calendarEvents["items"]
+                    .Where(eventItem => eventItem["start"]?["dateTime"] != null && eventItem["end"]?["dateTime"] != null)
+                    .ToList()
+                    .Select(eventItem => eventItem.ToObject<Mioto.Models.Events>())
+                    .ToList();
+
+                foreach (var item in allEvents)
+                {
+                    if (item.Summary == donThueXe.BienSo)
+                    {
+                        identify = item.Id;
+                        break;
+                    }
+                }
+            }
+
+            // Nếu tìm thấy sự kiện, xóa sự kiện trên Google Calendar
+            if (!string.IsNullOrEmpty(identify))
+            {
+                RestClient _restClient = new RestClient("https://www.googleapis.com/calendar/v3/calendars/primary/events/" + identify);
+                RestRequest _request = new RestRequest();
+                _request.AddQueryParameter("key", "AIzaSyDs2PE3cSuieWJalZMbSmoiC0v1NefPvhU");
+                _request.AddHeader("Authorization", "Bearer " + tokens["access_token"]);
+                _request.AddHeader("Accept", "application/json");
+
+                var _response = _restClient.Delete(_request);
+
+                if (_response.StatusCode != System.Net.HttpStatusCode.NoContent)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Lỗi khi xóa sự kiện trên Google Calendar");
+                }
+            }
+
+            // Cập nhật trạng thái thanh toán sau khi hủy chuyến
+            donThueXe.TrangThaiThanhToan = 2; // Đánh dấu là đã hủy
+            db.Entry(donThueXe).State = EntityState.Modified;
+            db.SaveChanges();
+
+            return RedirectToAction("MyTrip");
+        }
     }
 }
