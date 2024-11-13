@@ -1,4 +1,6 @@
 ﻿using Mioto.Models;
+using Newtonsoft.Json.Linq;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -438,7 +440,6 @@ namespace Mioto.Controllers
         {
             return View();
         }
-
         public ActionResult DeleteRentedCar(int id)
         {
             // Kiểm tra người dùng đã đăng nhập
@@ -484,7 +485,7 @@ namespace Mioto.Controllers
                 {
                     IDDT = id,
                     LoaiHuyChuyen = 2, // Chủ xe
-                    SoTienHoan = 0,
+                    SoTienHoan = denTien,
                     MoTa = "Hủy chuyến do chủ xe yêu cầu."
                 };
 
@@ -495,13 +496,61 @@ namespace Mioto.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Người dùng không hợp lệ");
             }
 
-            db.SaveChanges();
+            var tokenFile = "C:\\Program Files\\IIS Express\\Json\\tokens.json";
+            var tokens = JObject.Parse(System.IO.File.ReadAllText(tokenFile));
 
-        
+            RestClient restClient = new RestClient();
+            RestRequest request = new RestRequest("https://www.googleapis.com/calendar/v3/calendars/primary/events", Method.Get);
+
+            request.AddQueryParameter("key", "AIzaSyDs2PE3cSuieWJalZMbSmoiC0v1NefPvhU");
+            request.AddHeader("Authorization", "Bearer " + tokens["access_token"]);
+            request.AddHeader("Accept", "application/json");
+
+            var response = restClient.Execute(request);
+            string identify = "";
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                JObject calendarEvents = JObject.Parse(response.Content);
+                var allEvents = calendarEvents["items"]
+                    .Where(eventItem => eventItem["start"]?["dateTime"] != null && eventItem["end"]?["dateTime"] != null)
+                    .ToList()
+                    .Select(eventItem => eventItem.ToObject<Mioto.Models.Events>())
+                    .ToList();
+
+                foreach (var item in allEvents)
+                {
+                    if (item.Summary == donThueXe.BienSo)
+                    {
+                        identify = item.Id;
+                        break;
+                    }
+                }
+            }
+
+            // Xóa sự kiện trên Google Calendar
+            var _tokenFile = "C:\\Program Files\\IIS Express\\Json\\tokens.json";
+            var _tokens = JObject.Parse(System.IO.File.ReadAllText(_tokenFile));
+            RestClient _restClient = new RestClient("https://www.googleapis.com/calendar/v3/calendars/primary/events/" + identify);
+            RestRequest _request = new RestRequest();
+            _request.AddQueryParameter("key", "AIzaSyDs2PE3cSuieWJalZMbSmoiC0v1NefPvhU");
+            _request.AddHeader("Authorization", "Bearer " + _tokens["access_token"]);
+            _request.AddHeader("Accept", "application/json");
+
+            var _response = _restClient.Delete(_request);
+
+            if (_response.StatusCode != System.Net.HttpStatusCode.NoContent)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Lỗi khi xóa sự kiện trên Google Calendar");
+            }
+
+            // Cập nhật trạng thái thanh toán sau khi hủy chuyến
+            donThueXe.TrangThaiThanhToan = 2; // Đánh dấu là đã hủy
             db.Entry(donThueXe).State = EntityState.Modified;
             db.SaveChanges();
 
             return RedirectToAction("RentedCar");
         }
+
     }
 }
