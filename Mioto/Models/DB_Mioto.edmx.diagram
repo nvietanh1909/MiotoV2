@@ -4,25 +4,25 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="0009ee63f5814bb58f95192f81227727" Name="Diagram1">
+      <Diagram DiagramId="9e5c89e5f1f64afbb13b8185425047aa" Name="Diagram1">
         <EntityTypeShape EntityType="DB_MiotoModel.ChuXe" Width="1.5" PointX="3" PointY="5.25" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_MiotoModel.DanhGia" Width="1.5" PointX="9.75" PointY="5.625" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_MiotoModel.DoanhThu" Width="1.5" PointX="5.25" PointY="3.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="DB_MiotoModel.DonThueXe" Width="1.5" PointX="7.5" PointY="6.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_MiotoModel.DonThueXe" Width="1.5" PointX="7.5" PointY="6.25" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_MiotoModel.KhachHang" Width="1.5" PointX="0.75" PointY="4.5" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_MiotoModel.MaGiamGia" Width="1.5" PointX="5.25" PointY="13" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_MiotoModel.NhanVien" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_MiotoModel.PhiHuyChuyen" Width="1.5" PointX="9.75" PointY="8.375" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_MiotoModel.Xe" Width="1.5" PointX="5.25" PointY="8.125" IsExpanded="true" />
         <AssociationConnector Association="DB_MiotoModel.FK__ChuXe__IDKH__267ABA7A" ManuallyRouted="false" />
-        <AssociationConnector Association="DB_MiotoModel.FK__DoanhThu__IDCX__36B12243" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_MiotoModel.FK__DoanhThu__IDCX__37A5467C" ManuallyRouted="false" />
         <AssociationConnector Association="DB_MiotoModel.FK__Xe__IDCX__29572725" ManuallyRouted="false" />
-        <AssociationConnector Association="DB_MiotoModel.FK__DanhGia__IDDT__3A81B327" ManuallyRouted="false" />
-        <AssociationConnector Association="DB_MiotoModel.FK__DoanhThu__IDNV__37A5467C" ManuallyRouted="false" />
-        <AssociationConnector Association="DB_MiotoModel.FK__DonThueXe__BienS__33D4B598" ManuallyRouted="false" />
-        <AssociationConnector Association="DB_MiotoModel.FK__DonThueXe__IDKH__31EC6D26" ManuallyRouted="false" />
-        <AssociationConnector Association="DB_MiotoModel.FK__DonThueXe__IDMGG__32E0915F" ManuallyRouted="false" />
-        <AssociationConnector Association="DB_MiotoModel.FK__PhiHuyChuy__IDDT__3D5E1FD2" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_MiotoModel.FK__DanhGia__IDDT__3B75D760" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_MiotoModel.FK__DoanhThu__IDNV__38996AB5" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_MiotoModel.FK__DonThueXe__BienS__34C8D9D1" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_MiotoModel.FK__DonThueXe__IDKH__32E0915F" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_MiotoModel.FK__DonThueXe__IDMGG__33D4B598" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_MiotoModel.FK__PhiHuyChuy__IDDT__3E52440B" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

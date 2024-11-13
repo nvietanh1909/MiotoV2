@@ -24,6 +24,7 @@ namespace Mioto.Models
         public int IDTX { get; set; }
         public System.DateTime NgayThue { get; set; }
         public System.DateTime NgayTra { get; set; }
+        public System.DateTime TGThanhToan { get; set; }
         public int TrangThaiThanhToan { get; set; }
         public decimal TongTien { get; set; }
         public decimal PhanTramHoaHong { get; set; }

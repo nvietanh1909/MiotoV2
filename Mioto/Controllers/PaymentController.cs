@@ -155,7 +155,6 @@ namespace Mioto.Controllers
         {
             if (!IsLoggedIn)
                 return RedirectToAction("Login", "Account");
-
             if (!ModelState.IsValid)
             {
                 foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
@@ -164,7 +163,7 @@ namespace Mioto.Controllers
                 }
                 return View(bookingCar);
             }
-
+            var kh = Session["KhachHang"] as KhachHang;
             var startDateTime = Session["StartDateTime"];
             var endDateTime = Session["EndDateTime"];
 
@@ -190,11 +189,12 @@ namespace Mioto.Controllers
             // Lưu đơn hàng vào cơ sở dữ liệu
             var donThueXe = new DonThueXe
             {
-                IDKH = bookingCar.KhachHang.IDKH,
+                IDKH = kh.IDKH,
                 IDMGG = discount?.IDMGG,
                 BienSo = bookingCar.Xe.BienSo,
                 NgayThue = bookingCar.NgayThue,
                 NgayTra = bookingCar.NgayTra,
+                TGThanhToan = DateTime.Now,
                 TrangThaiThanhToan = 0,
                 PhanTramHoaHong = 10,
                 TongTien = tongTien
@@ -239,11 +239,11 @@ namespace Mioto.Controllers
             var donthuexe = Session["DonThueXe"] as DonThueXe;
             var info = new Dictionary<string, string> 
             {
-                {"BANK_ID", "TCB" },
-                {"ACCOUNT_NO", "19071843431017" },
+                {"BANK_ID", "MB" },
+                {"ACCOUNT_NO", "0932175716" },
                 {"OWNER", "Nguyen Viet Anh" }
             };
-            var paidContent = donthuexe.IDTX.ToString();
+            var paidContent = $"MIOTO{donthuexe.IDTX.ToString()}";
 
             string QR = $"https://img.vietqr.io/image/{info["BANK_ID"]}-{info["ACCOUNT_NO"]}-compact2.png?amount={donthuexe.TongTien}&addInfo={paidContent}&accountName={Uri.EscapeDataString(info["OWNER"])}";
             ViewBag.QRCodeUrl = QR;

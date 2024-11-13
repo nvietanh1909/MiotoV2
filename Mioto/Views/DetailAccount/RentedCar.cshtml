@@ -44,13 +44,13 @@
                                 <td class="column100 column1">@car.NgayTra.ToString("dd/MM/yyyy")</td>
                                 <td class="column100 column6">@string.Format("{0:N0} VNĐ", car.TongTien)</td>
                                 <td class="column100 column7">
-                                    @if (car.TrangThai == 1)
+                                    @if (car.TrangThai == 0)
                                     {
-                                        <span class="badge bg-success">Đặt thuê xe</span>
+                                        <span class="badge bg-success">Chưa thanh toán</span>
                                     }
-                                    else if (car.TrangThai == 2)
+                                    else if (car.TrangThai == 1)
                                     {
-                                        <span class="badge bg-secondary">Hủy chuyến</span>
+                                        <span class="badge bg-secondary">Đã thanh toán</span>
                                     }
                                     else
                                     {
@@ -114,11 +114,11 @@ else
     </div>
 }
 
-@section Scripts {
+@*@section Scripts {
     <script type="text/javascript">
         function viewDetails(row) {
             var id = row.getAttribute('data-id');
             window.location.href = '@Url.Action("CustomerDetails", "DetailAccount")/' + id;
         }
     </script>
-}
+}*@

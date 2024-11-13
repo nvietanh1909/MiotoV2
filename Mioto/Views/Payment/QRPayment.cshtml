@@ -100,7 +100,7 @@
     <script>
         let isSuccess = false;
         const price = @donthuexe.TongTien;
-        const content = "@donthuexe.IDTX";
+        const content = "MIOTO"+@donthuexe.IDTX;
 
         async function checkPaid(price, content) {
             if (isSuccess) {
@@ -108,7 +108,7 @@
             }
             try {
                 const response = await fetch(
-                    "https://script.google.com/macros/s/AKfycbxqKrSsb2jqpFur0lGIX86-9nHkZ-OSKYLSRTtPVPv7CHGCBbe3ofKzDLWKXCslRMtT/exec"
+                    "https://script.google.com/macros/s/AKfycbxSj_s39rsblEap9qCIHu_vDPMf180Smu1kQQQDNOLCZ5eHgTjv36BEmjsV0tE77Ce-GA/exec"
                 );
                 const data = await response.json();
                 const last_paid = data.data[data.data.length - 1];
@@ -120,7 +120,6 @@
                     isSuccess = true;
                     document.querySelector("#successForm").submit();
 
-                    // Cập nhật thanh tiến trình và trạng thái
                     document.getElementById('paymentProgress').style.width = '100%';
                     document.getElementById('paymentStatus').textContent = "Thanh toán thành công!";
                 } else {
