@@ -131,8 +131,7 @@ namespace Mioto.Controllers
 
         public ActionResult VerifyOtp()
         {
-            if (Session["KhachHang"] != null || Session["NhanVien"] != null)
-                return Logout();
+            
 
             return View();
         }

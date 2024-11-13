@@ -168,41 +168,36 @@ namespace Mioto.Controllers
             var startDateTime = Session["StartDateTime"];
             var endDateTime = Session["EndDateTime"];
 
-            int soNgayThue = Math.Max((bookingCar.NgayTra - bookingCar.NgayThue).Days, 1);
-
             // Kiểm tra mã giảm giá
             decimal discountPercentage = 0;
             MaGiamGia discount = null;
             if (!string.IsNullOrEmpty(bookingCar.MaGiamGia?.MaGG))
             {
                 discount = db.MaGiamGia.FirstOrDefault(m => m.MaGG == bookingCar.MaGiamGia.MaGG);
-                if (discount == null || discount.SoLuong <= 0 || discount.NgayKeyThuc < DateTime.Now)
+                if (discount == null || discount.SoLuong <= 0 || discount.NgayKetThuc < DateTime.Now)
                 {
                     ModelState.AddModelError("", "Mã giảm giá không hợp lệ hoặc đã hết hạn.");
                     return View(bookingCar);
                 }
 
                 discountPercentage = discount.PhanTramGiam;
-                discount.SoLuong--;
                 db.Entry(discount).State = EntityState.Modified;
                 db.SaveChanges();
             }
 
             // Tính tổng tiền với giảm giá
-            decimal tongTien = bookingCar.Xe.GiaThue * soNgayThue;
-            decimal discountedAmount = tongTien * (1 - discountPercentage / 100);
-
+            decimal tongTien = bookingCar.TongTien;
             // Lưu đơn hàng vào cơ sở dữ liệu
             var donThueXe = new DonThueXe
             {
                 IDKH = bookingCar.KhachHang.IDKH,
-                IDMGG = discount?.IDMGG ?? 0,
+                IDMGG = discount?.IDMGG,
                 BienSo = bookingCar.Xe.BienSo,
                 NgayThue = bookingCar.NgayThue,
                 NgayTra = bookingCar.NgayTra,
                 TrangThaiThanhToan = 0,
                 PhanTramHoaHong = 10,
-                TongTien = discountedAmount
+                TongTien = tongTien
             };
             Session["DonThueXe"] = donThueXe;
             Session["StartDateTime"] = startDateTime;
@@ -213,44 +208,22 @@ namespace Mioto.Controllers
             return RedirectToAction("QRPayment", "Payment");
         }
 
-
-        [HttpPost]
-        private bool IsValidRentalPeriod(DateTime ngayThue, DateTime ngayTra, string bienSo)
-        {
-            if (ngayTra <= ngayThue)
-            {
-                ModelState.AddModelError("", "Ngày trả phải sau ngày thuê.");
-                return false;
-            }
-
-            var existingBooking = db.DonThueXe
-                .FirstOrDefault(d => d.BienSo == bienSo &&
-                                     ((d.NgayThue < ngayTra && d.NgayTra > ngayThue) ||
-                                      (d.NgayThue < ngayThue && d.NgayTra > ngayThue) ||
-                                      (d.NgayThue < ngayTra && d.NgayTra > ngayTra)));
-
-            if (existingBooking != null)
-            {
-                ModelState.AddModelError("", "Xe đã được thuê trong khoảng thời gian này.");
-                return false;
-            }
-
-            return true;
-        }
         [HttpPost]
         public JsonResult ApplyDiscount(string discountCode, decimal totalPrice)
         {
-            var discount = db.MaGiamGia.FirstOrDefault(m => m.MaGG == discountCode && m.NgayKeyThuc >= DateTime.Now);
+            var discount = db.MaGiamGia.FirstOrDefault(m => m.MaGG == discountCode && m.NgayKetThuc >= DateTime.Now);
 
             if (discount != null)
             {
+                decimal discountPercentage = Convert.ToDecimal(discount.PhanTramGiam);
+                decimal discountAmount = totalPrice * (discountPercentage / 100);
+
+                decimal newTotalPrice = totalPrice - discountAmount;
                 discount.SoLuong--;
                 db.Entry(discount).State = EntityState.Modified;
                 db.SaveChanges();
 
-                decimal discountAmount = totalPrice * (discount.PhanTramGiam / 100);
-                decimal newTotalPrice = totalPrice - discountAmount;
-                return Json(new { success = true, newTotalPrice = newTotalPrice });
+                return Json(new { success = true, newTotalPrice = newTotalPrice, discount = discount.PhanTramGiam }); 
             }
             else
             {

@@ -36,6 +36,20 @@
     .txtGray {
         color: #798594;
     }
+    a {
+        color: black;
+    }
+        a:hover {
+            color: inherit;
+            background-color: inherit;
+            text-decoration: none;
+        }
+    .header .m-container .menu-container a {
+        font-weight: 500;
+    }
+    .header .m-container .menu-container .dropdown-profile .name {
+        font-weight: 500;
+    }
 </style>
 @using (Html.BeginForm("BookingCar", "Payment", FormMethod.Post, new { id = "bookingForm" }))
 {
@@ -143,44 +157,41 @@
                             </p>
                         </div>
 
-                        @using (Html.BeginForm("CheckRentalPeriod", "Payment", FormMethod.Get, new { id = "checkRentalForm" }))
-                        {
-                            <div style="display:flex; justify-content: space-between">
-                                <div class="form-group">
-                                    <strong>Ngày thuê</strong>
-                                    @Html.EditorFor(model => model.NgayThue, new { htmlAttributes = new { @class = "form-control", id = "NgayThue" } })
-                                    @Html.ValidationMessageFor(model => model.NgayThue, "", new { @class = "text-danger" })
-                                </div>
-                                <div class="form-group">
-                                    <strong>Ngày trả</strong>
-                                    @Html.EditorFor(model => model.NgayTra, new { htmlAttributes = new { @class = "form-control", id = "NgayTra" } })
-                                    @Html.ValidationMessageFor(model => model.NgayTra, "", new { @class = "text-danger" })
-                                </div>
-                                <div class="form-group">
-                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                                </div>
+                        <div style="display:flex; justify-content: space-between">
+                            <div class="form-group">
+                                <strong>Ngày thuê</strong>
+                                @Html.EditorFor(model => model.NgayThue, new { htmlAttributes = new { @class = "form-control", id = "NgayThue", type = "datetime-local" } })
+                                @Html.ValidationMessageFor(model => model.NgayThue, "", new { @class = "text-danger" })
                             </div>
 
-                            <button type="button" id="checkRentalBtn">Kiểm tra kỳ hạn</button>
-                        }
-
-                        <div class="d-flex justify-content-between mb-2">
-                            <p class="textmuted">Số lượng:</p>
-                            <p class="fs-14">1</p>
+                            <div class="form-group">
+                                <strong>Ngày trả</strong>
+                                @Html.EditorFor(model => model.NgayTra, new { htmlAttributes = new { @class = "form-control", id = "NgayTra", type = "datetime-local" } })
+                                @Html.ValidationMessageFor(model => model.NgayTra, "", new { @class = "text-danger" })
+                            </div>
                         </div>
 
+                        <div id="alert-error" style="color:red;"></div>
                         <div class="d-flex justify-content-between mb-2">
                             <p class="textmuted">Giá tiền thuê/ ngày:</p>
                             <p class="fs-14">@String.Format("{0:N0} VND", Model.Xe.GiaThue)</p>
                             @Html.HiddenFor(model => model.Xe.GiaThue)
                         </div>
+
                         <div class="d-flex justify-content-between mb-2">
                             <p class="textmuted">Giảm giá:</p>
-                            <p class="fs-14"></p>
+                            <p class="fs-14" id="percent_discount"></p>
                         </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <p class="textmuted">Số lượng ngày thuê:</p>
+                            <p class="fs-14" id="number_day_rented"></p>
+                        </div>
+
                         <div class="d-flex justify-content-between mb-3">
                             <label for="totalAmount" class="textmuted">Tổng tiền:</label>
                             <span id="GiaThue">0 VNĐ</span>
+                            @Html.HiddenFor(model => model.TongTien)
                         </div>
                     </div>
 
@@ -204,75 +215,92 @@
                                     </div>
                                 </div>
                             </div>*@
-                        <button type="submit" class="btn btn-primary" id="btn-success" style="margin-top: 20px;">Thanh toán</button>
+                        <button type="submit" class="btn btn-primary" id="btn-success" style="margin-top: 20px;">Thanh toán<span class="fas fa-arrow-right ps-2"></span></button>
 
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script type="text/javascript">
-        document.getElementById("checkRentalBtn").onclick = function () {
-            document.getElementById("checkRentalForm").submit();
-        };
-
-        document.getElementById("checkRentalBtn").onclick = function () {
-            var form = document.getElementById("checkRentalForm");
-            if (form.checkValidity()) {
-                form.submit();
-            } else {
-                alert("Please fill out the required fields.");
-            }
-        };
-
-        document.getElementById("btn-success").onclick = function () {
-            var form = document.getElementById("bookingForm");
-            if (form.checkValidity()) {
-                form.submit();
-            } else {
-                alert("Please fill out the required fields.");
-            }
-        };
-    </script>
 }
 
 @section Scripts {
     <script type="text/javascript">
-        function cleanDate(dateString) {
-            var cleanedDate = dateString.replace(/[^0-9/]/g, '');
-            if (cleanedDate.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/)) {
-                return cleanedDate;
-            }
-            return null;
-        }
-
-    $(document).ready(function () {
-        function calculatePrice() {
-            var ngayThue = $('#NgayThue').val();
-            var ngayTra = $('#NgayTra').val();
-
-            if (ngayThue && ngayTra) {
-                var startDate = new Date(ngayThue + "T00:00:00");
-                var endDate = new Date(ngayTra + "T00:00:00");
-                var timeDifference = endDate - startDate;
-
-                if (timeDifference == 0) { var days = 1; }
-                days = Math.ceil(timeDifference / (1000 * 3600 * 24));
-
-                if (days >= 0) {
-                    var giaThuePerDay = @Model.Xe.GiaThue;
-                    var totalPrice = (days === 0 ? giaThuePerDay : giaThuePerDay * days);
-                    $('#GiaThue').text(totalPrice.toLocaleString('vi-VN') + ' VNĐ');
-                    $('input[name="SoTien"]').val(totalPrice);
-                } else {
-                    $('#GiaThue').text('Ngày trả phải sau ngày thuê');
-                }
+       $(document).ready(function () {
+    function calculatePrice() {
+        var ngayThue = $('#NgayThue').val();
+        var ngayTra = $('#NgayTra').val();
+        var rangeNgayThue = new Date('@Session["StartDateTime"]'); // Ngày thuê từ Session
+        var rangeNgayTra = new Date('@Session["EndDateTime"]');
+        var currentDate = new Date(); // Ngày hiện tại
+      
+        // Kiểm tra ngày thuê phải là ngày hiện tại trở lên
+        if (ngayThue) {
+            var startDate = new Date(ngayThue);
+            if (startDate < currentDate) {
+                $('#alert-error').text('Ngày thuê không thể nhỏ hơn ngày hiện tại');
+                return;
             }
         }
 
-        $('#NgayThue, #NgayTra').on('change', function () {
-            calculatePrice();
-        });
+        if (ngayThue && ngayTra) {
+            // Chuyển các chuỗi ngày tháng thành đối tượng Date
+            var startDate = new Date(ngayThue); // Chú ý định dạng nhập vào là yyyy-MM-ddTHH:mm:ss
+            var endDate = new Date(ngayTra);
+
+            // Kiểm tra ngày thuê và ngày trả có nằm trong khoảng cho phép
+            if (startDate < rangeNgayThue || endDate > rangeNgayTra) {
+                // Định dạng ngày và giờ cho rangeNgayThue và rangeNgayTra
+                var formattedRangeNgayThue = rangeNgayThue.toLocaleString('vi-VN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                var formattedRangeNgayTra = rangeNgayTra.toLocaleString('vi-VN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                // Hiển thị thông báo với khoảng ngày giờ cho phép
+                $('#alert-error').text('Ngày thuê và ngày trả phải nằm trong khoảng: ' + formattedRangeNgayThue + ' - ' + formattedRangeNgayTra);
+                return;
+            }
+
+            // Tính toán sự khác biệt thời gian giữa ngày trả và ngày thuê
+            var timeDifference = endDate - startDate;
+
+            // Nếu thời gian khác biệt bằng 0 (ngày thuê và trả là cùng một ngày), thì tính là 1 ngày
+            var hours = timeDifference / (1000 * 60 * 60); // Tổng số giờ thuê
+            var days = Math.ceil(hours / 24); // Số ngày thuê
+            var giaThuePerDay = @Model.Xe.GiaThue; // Giá thuê mỗi ngày từ model
+            var totalPrice = giaThuePerDay * days; // Tổng giá thuê
+
+            if (timeDifference > 0) {
+                $('#number_day_rented').text(days);
+                $('#alert-error').text(""); // Xóa thông báo lỗi
+                // Hiển thị giá tiền
+                $('#GiaThue').text(totalPrice.toLocaleString('vi-VN') + ' VNĐ');
+                $('input[name="TongTien"]').val(totalPrice);
+                // Cập nhật giá thuê vào input ẩn (sử dụng trong form submission)
+                $('input[name="SoTien"]').val(totalPrice);
+            } else {
+                // Nếu ngày trả sớm hơn ngày thuê, hiển thị thông báo lỗi
+                $('#alert-error').text('Ngày trả phải sau ngày thuê');
+            }
+        }
+    }
+
+    // Khi ngày thuê hoặc ngày trả thay đổi, tính lại giá thuê
+    $('#NgayThue, #NgayTra').on('change', function () {
+        calculatePrice();
+    });
+});
+
 
     $('#applyDiscount').click(function () {
         var discountCode = $('#discountCode').val();
@@ -286,9 +314,12 @@
                 success: function (data) {
                     if (data.success) {
                         var discountedPrice = data.newTotalPrice;
+                        var discountPercentage = data.discount; 
+
                         $('#GiaThue').text(discountedPrice.toLocaleString('vi-VN') + ' VNĐ');
                         $('input[name="SoTien"]').val(discountedPrice);
-                        alert('Mã giảm giá đã được áp dụng!');
+                        $('input[name="TongTien"]').val(discountedPrice);
+                        $('#percent_discount').text(discountPercentage + '%');
                     } else {
                         alert('Mã giảm giá không hợp lệ!');
                     }
@@ -301,73 +332,5 @@
             alert('Vui lòng nhập mã giảm giá!');
         }
     });
-
-        $('#btn_paid').click(function () {
-            var giaThueText = document.getElementById("GiaThue").textContent;
-            var giaThue = parseInt(giaThueText.replace(/\D/g, ''), 10);
-
-            var ngayThue = $('#NgayThue').val();
-            var ngayTra = $('#NgayTra').val();
-
-            ngayThue = ngayThue.replace(/-/g, '');
-            ngayTra = ngayTra.replace(/-/g, '');
-
-
-            var customerID = $('#customerID').val();
-            var numberCar = $('#number_car').text();
-            var cleanNumberCar = numberCar.replace(/-/g, '');
-
-            var paidContent = `${customerID} ${cleanNumberCar} ${ngayThue}`;
-            if (giaThue != 0) {
-                var qrUrl = `https://img.vietqr.io/image/TCB-19071843431017-compact2.png?amount=${giaThue}&addInfo=${encodeURIComponent(paidContent)}&accountName=Nguyen%20Viet%20Anh`;
-
-                $('.course_qr_img').attr('src', qrUrl);
-
-                $('#btn_paid').text("Xác thực đã thanh toán");
-
-                setTimeout(function () {
-                    setInterval(() => {
-                        checkPaid(giaThue, paidContent);
-                    }, 1000)
-                }, 10000);
-            }
-            else {
-                alert("Giá thuê phải > 0")
-            }
-
-        });
-    });
-
-        // Kiểm tra giao dịch
-        let isSuccess = false;
-        async function checkPaid(price, content) {
-            if (isSuccess) {
-                return
-            }
-            else {
-                try {
-                    const response = await fetch(
-                        "https://script.google.com/macros/s/AKfycbxqKrSsb2jqpFur0lGIX86-9nHkZ-OSKYLSRTtPVPv7CHGCBbe3ofKzDLWKXCslRMtT/exec"
-                    );
-                    const data = await response.json();
-                    const last_paid = data.data[data.data.length - 1];
-                    last_prices = last_paid["price"];
-                    last_content = last_paid["content"];
-                    console.log(data)
-                    console.log(last_paid)
-                    if (last_prices >= price && last_content.includes(content)) {
-                        console.log("Thanh toán thành công");
-                        isSuccess = true
-                        if (isSuccess) {
-                            document.querySelector('#btn-success').click();
-                        }
-                    } else {
-                        console.log("Thanh toán không thành công");
-                    }
-                } catch {
-                    console.error("Lỗi");
-                }
-            }
-    }
     </script>
 }

@@ -33,5 +33,6 @@ namespace Mioto.Models
         public Xe Xe { get; set; }
         public KhachHang KhachHang { get; set; }
         public MaGiamGia MaGiamGia { get; set; }
+        public decimal TongTien { get; set; }
     }
 }

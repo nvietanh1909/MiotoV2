@@ -75,12 +75,47 @@
 
                                 <div class="choose">
                                     <label class="choose-item has-arrow">
-                                        <span class="value">Chọn thời gian bắt đầu và kết thúc</span>
-                                        <input type="datetime-local" name="startTime" />
-                                        <input type="datetime-local" name="endTime" />
+                                        <input type="datetime-local" name="startTime" id="startTime" />
+                                        <input type="datetime-local" name="endTime" id="endTime" />
                                     </label>
                                 </div>
+
+                                <div style="color: red" id="error_date"></div>
                             </div>
+                            <script>
+                                const currentDate = new Date().toISOString().slice(0, 16);
+
+                                // Thiết lập giá trị min cho input ngày bắt đầu và kết thúc
+                                document.getElementById("startTime").setAttribute("min", currentDate);
+                                document.getElementById("endTime").setAttribute("min", currentDate);
+
+                                // Kiểm tra ngày kết thúc không thể nhỏ hơn ngày bắt đầu
+                                document.getElementById("startTime").addEventListener("change", function () {
+                                    const startTime = document.getElementById("startTime").value;
+                                    const endTime = document.getElementById("endTime").value;
+                                    const errorMessage = document.getElementById("error_date");
+
+                                    if (endTime && startTime > endTime) {
+                                        errorMessage.innerHTML = "Ngày kết thúc không thể trước ngày bắt đầu!";
+                                        document.getElementById("endTime").value = ""; // Xóa ngày kết thúc nếu không hợp lệ
+                                    } else {
+                                        errorMessage.innerHTML = ""; // Xóa thông báo lỗi khi hợp lệ
+                                    }
+                                });
+
+                                document.getElementById("endTime").addEventListener("change", function () {
+                                    const startTime = document.getElementById("startTime").value;
+                                    const endTime = document.getElementById("endTime").value;
+                                    const errorMessage = document.getElementById("error_date");
+
+                                    if (endTime && startTime > endTime) {
+                                        errorMessage.innerHTML = "Ngày kết thúc không thể trước ngày bắt đầu!";
+                                        document.getElementById("endTime").value = ""; // Xóa ngày kết thúc nếu không hợp lệ
+                                    } else {
+                                        errorMessage.innerHTML = ""; // Xóa thông báo lỗi khi hợp lệ
+                                    }
+                                });
+                            </script>
 
                             <button type="submit" class="btn btn-primary search-btn">Tìm Xe</button>
                         </div>
@@ -379,12 +414,6 @@
         <div class="m-container">
             <p class="text-justify black-color-text" style="margin-bottom: 2px;">
                 <span>Nguyễn Việt Anh -<b>22DH110144</b></span>
-            </p>
-            <p class="text-justify black-color-text" style="margin-bottom: 2px;">
-                <span>Nguyễn Hữu Phước -<b>22DH112914</b></span>
-            </p>
-            <p class="text-justify black-color-text" style="margin-bottom: 2px;">
-                <span>Trần Minh Việt -<b>22DH114248</b></span>
             </p>
         </div>
     </section>

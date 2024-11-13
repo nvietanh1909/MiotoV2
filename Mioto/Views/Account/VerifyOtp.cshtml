@@ -3,14 +3,119 @@
     Layout = "~/Views/Shared/_LayoutBase.cshtml";
 }
 
-<h2>Xác Thực OTP</h2>
+<style>
+    .otp-title {
+        font-size: 28px;
+        text-align: center;
+        font-weight: bold;
+        color: #333;
+    }
 
-<form method="post" action="@Url.Action("VerifyOtp", "Account")">
+    .otp-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 400px;
+        margin: 0 auto;
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .otp-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .otp-inputs {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .otp-input {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        text-align: center;
+        border: 2px solid #ccc;
+        border-radius: 10px;
+        outline: none;
+        transition: border-color 0.3s ease;
+    }
+
+        .otp-input:focus {
+            border-color: #007bff;
+            box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5);
+        }
+
+    .otp-submit {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .otp-submit:hover {
+            background-color: #0056b3;
+        }
+</style>
+
+<form method="post" action="@Url.Action("VerifyOtp", "Account")" class="otp-form">
     @Html.AntiForgeryToken()
-
-    <div class="form-group">
-        <label for="otp">Nhập mã OTP đã gửi đến email:</label>
-        <input type="text" id="otp" name="otp" class="form-control" required />
+    <h2 class="otp-title">Nhập mã xác thực OTP</h2>
+    <span style="margin-bottom: 30px;">Mã xác thực đã được gửi qua email của bạn</span>
+    <div class="otp-container">
+        <div class="otp-inputs">
+            <input type="text" id="otp1" name="otp1" class="otp-input" maxlength="1" oninput="moveFocus(this, 'otp2')" required />
+            <input type="text" id="otp2" name="otp2" class="otp-input" maxlength="1" oninput="moveFocus(this, 'otp3')" required />
+            <input type="text" id="otp3" name="otp3" class="otp-input" maxlength="1" oninput="moveFocus(this, 'otp4')" required />
+            <input type="text" id="otp4" name="otp4" class="otp-input" maxlength="1" oninput="moveFocus(this, 'otp5')" required />
+            <input type="text" id="otp5" name="otp5" class="otp-input" maxlength="1" oninput="moveFocus(this, 'otp6')" required />
+            <input type="text" id="otp6" name="otp6" class="otp-input" maxlength="1" required />
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary">Xác Thực</button>
+
+    <button type="submit" class="otp-submit">Xác Thực</button>
 </form>
+
+<script>
+    function moveFocus(currentInput, nextInputId) {
+        if (currentInput.value.length == 1) {
+            document.getElementById(nextInputId).focus();
+        }
+    }
+
+    document.querySelector(".otp-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const otp = [
+            document.getElementById('otp1').value,
+            document.getElementById('otp2').value,
+            document.getElementById('otp3').value,
+            document.getElementById('otp4').value,
+            document.getElementById('otp5').value,
+            document.getElementById('otp6').value
+        ].join('');
+
+        if (otp.length === 6) {
+            // Send the OTP as a single string to the server
+            const otpInput = document.createElement('input');
+            otpInput.type = 'hidden';
+            otpInput.name = 'otp';
+            otpInput.value = otp;
+            this.appendChild(otpInput);
+            this.submit();
+        } else {
+            alert("Vui lòng nhập đầy đủ mã OTP.");
+        }
+    });
+</script>

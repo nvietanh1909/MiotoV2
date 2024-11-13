@@ -383,6 +383,16 @@
     <Content Include="Content\bootstrap-grid.rtl.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
+    <Content Include="Models\DB_Mioto.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>DB_Mioto.edmx</DependentUpon>
+      <LastGenOutput>DB_Mioto.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\DB_Mioto.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>DB_Mioto.edmx</DependentUpon>
+      <LastGenOutput>DB_Mioto.cs</LastGenOutput>
+    </Content>
     <Content Include="Scripts\Payment\main.js" />
     <Content Include="zpgateway\css\blue%402x.png" />
     <Content Include="zpgateway\css\blue.css" />
@@ -463,6 +473,8 @@
     <Content Include="zpgateway\js\jquery.min.js" />
     <Content Include="zpgateway\quycach1.html" />
     <Content Include="zpgateway\quycach2.html" />
+    <Content Include="Json\api_calendar.json" />
+    <Content Include="Json\tokens.json" />
     <EntityDeploy Include="Models\DB_Mioto.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>DB_Mioto.Designer.cs</LastGenOutput>
@@ -470,22 +482,10 @@
     <Content Include="Models\DB_Mioto.edmx.diagram">
       <DependentUpon>DB_Mioto.edmx</DependentUpon>
     </Content>
-    <Content Include="Json\api_calendar.json" />
-    <Content Include="Json\tokens.json" />
     <None Include="Properties\PublishProfiles\nvietanh1909-001-site1 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\nvietanh1909-001-site1 - FTP1.pubxml" />
     <None Include="Properties\PublishProfiles\nvietanh1909-001-site1 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\nvietanh1909-001-site1 - Web Deploy1.pubxml" />
-    <Content Include="Models\DB_Mioto.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DB_Mioto.edmx</DependentUpon>
-      <LastGenOutput>DB_Mioto.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\DB_Mioto.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DB_Mioto.edmx</DependentUpon>
-      <LastGenOutput>DB_Mioto.cs</LastGenOutput>
-    </Content>
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
