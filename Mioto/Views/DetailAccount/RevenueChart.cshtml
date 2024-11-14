@@ -1,13 +1,6 @@
-﻿@model Mioto.Models.DoanhThu
-
-@{
+﻿@{
     ViewBag.Title = "RevenueChart";
     Layout = "~/Views/Shared/_LayoutAccount.cshtml";
-
-    var doanhThuNgay = Model.DoanhThuNgay;
-    var doanhThuTuan = Model.DoanhThuTuan;
-    var doanhThuThang = Model.DoanhThuThang;
-    var doanhThuNam = Model.DoanhThuNam;
 }
 
 <div class="title-item">
@@ -24,23 +17,23 @@ document.addEventListener('DOMContentLoaded', function () {
         data: {
             labels: ['Ngày', 'Tuần', 'Tháng', 'Năm'],
             datasets: [{
-                label: '',
+                label: 'Doanh Thu',
                 data: [
-                    @doanhThuNgay,
-                    @doanhThuTuan,
-                    @doanhThuThang,
-                    @doanhThuNam
+                    @ViewBag.DoanhThuNgay,
+                    @ViewBag.DoanhThuTuan,
+                    @ViewBag.DoanhThuThang,
+                    @ViewBag.DoanhThuNam
                 ],
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
                     'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)' 
+                    'rgba(75, 192, 192, 0.2)'
                 ],
                 borderColor: [
                     'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)', 
-                    'rgba(255, 206, 86, 1)', 
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
                     'rgba(75, 192, 192, 1)'
                 ],
                 borderWidth: 1

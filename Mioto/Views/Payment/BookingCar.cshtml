@@ -234,7 +234,6 @@
         var rangeNgayTra = new Date('@Session["EndDateTime"]');
         var currentDate = new Date(); // Ngày hiện tại
       
-        // Kiểm tra ngày thuê phải là ngày hiện tại trở lên
         if (ngayThue) {
             var startDate = new Date(ngayThue);
             if (startDate < currentDate) {
@@ -244,13 +243,10 @@
         }
 
         if (ngayThue && ngayTra) {
-            // Chuyển các chuỗi ngày tháng thành đối tượng Date
             var startDate = new Date(ngayThue); // Chú ý định dạng nhập vào là yyyy-MM-ddTHH:mm:ss
             var endDate = new Date(ngayTra);
 
-            // Kiểm tra ngày thuê và ngày trả có nằm trong khoảng cho phép
             if (startDate < rangeNgayThue || endDate > rangeNgayTra) {
-                // Định dạng ngày và giờ cho rangeNgayThue và rangeNgayTra
                 var formattedRangeNgayThue = rangeNgayThue.toLocaleString('vi-VN', {
                     day: '2-digit',
                     month: '2-digit',
@@ -266,15 +262,12 @@
                     minute: '2-digit'
                 });
 
-                // Hiển thị thông báo với khoảng ngày giờ cho phép
                 $('#alert-error').text('Ngày thuê và ngày trả phải nằm trong khoảng: ' + formattedRangeNgayThue + ' - ' + formattedRangeNgayTra);
                 return;
             }
 
-            // Tính toán sự khác biệt thời gian giữa ngày trả và ngày thuê
             var timeDifference = endDate - startDate;
 
-            // Nếu thời gian khác biệt bằng 0 (ngày thuê và trả là cùng một ngày), thì tính là 1 ngày
             var hours = timeDifference / (1000 * 60 * 60); // Tổng số giờ thuê
             var days = Math.ceil(hours / 24); // Số ngày thuê
             var giaThuePerDay = @Model.Xe.GiaThue; // Giá thuê mỗi ngày từ model
@@ -282,14 +275,11 @@
 
             if (timeDifference > 0) {
                 $('#number_day_rented').text(days);
-                $('#alert-error').text(""); // Xóa thông báo lỗi
-                // Hiển thị giá tiền
+                $('#alert-error').text(""); 
                 $('#GiaThue').text(totalPrice.toLocaleString('vi-VN') + ' VNĐ');
                 $('input[name="TongTien"]').val(totalPrice);
-                // Cập nhật giá thuê vào input ẩn (sử dụng trong form submission)
                 $('input[name="SoTien"]').val(totalPrice);
             } else {
-                // Nếu ngày trả sớm hơn ngày thuê, hiển thị thông báo lỗi
                 $('#alert-error').text('Ngày trả phải sau ngày thuê');
             }
         }

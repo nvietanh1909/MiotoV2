@@ -45,6 +45,7 @@ namespace Mioto.Controllers
                 {
                     Session["KhachHang"] = IsGuest;
                     Session["ChuXe"] = IsChuXe;
+                    Session["NhanVien"] = IsNhanVien;
                     return RedirectToAction("Home", "Home");
                 }
                 Session["KhachHang"] = IsGuest;

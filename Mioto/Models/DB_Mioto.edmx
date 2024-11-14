@@ -32,8 +32,8 @@
           <Property Name="DoanhThuThang" Type="decimal" Precision="15" Scale="2" Nullable="false" />
           <Property Name="DoanhThuNam" Type="decimal" Precision="15" Scale="2" Nullable="false" />
           <Property Name="NgayCapNhat" Type="date" Nullable="false" />
-          <Property Name="IDCX" Type="int" Nullable="false" />
-          <Property Name="IDNV" Type="int" Nullable="false" />
+          <Property Name="IDCX" Type="int" />
+          <Property Name="IDNV" Type="int" />
         </EntityType>
         <EntityType Name="DonThueXe">
           <Key>
@@ -145,7 +145,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__DoanhThu__IDCX__37A5467C">
-          <End Role="ChuXe" Type="Self.ChuXe" Multiplicity="1" />
+          <End Role="ChuXe" Type="Self.ChuXe" Multiplicity="0..1" />
           <End Role="DoanhThu" Type="Self.DoanhThu" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ChuXe">
@@ -157,7 +157,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__DoanhThu__IDNV__38996AB5">
-          <End Role="NhanVien" Type="Self.NhanVien" Multiplicity="1" />
+          <End Role="NhanVien" Type="Self.NhanVien" Multiplicity="0..1" />
           <End Role="DoanhThu" Type="Self.DoanhThu" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="NhanVien">
@@ -311,8 +311,8 @@
           <Property Name="DoanhThuThang" Type="Decimal" Precision="15" Scale="2" Nullable="false" />
           <Property Name="DoanhThuNam" Type="Decimal" Precision="15" Scale="2" Nullable="false" />
           <Property Name="NgayCapNhat" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="IDCX" Type="Int32" Nullable="false" />
-          <Property Name="IDNV" Type="Int32" Nullable="false" />
+          <Property Name="IDCX" Type="Int32" />
+          <Property Name="IDNV" Type="Int32" />
           <NavigationProperty Name="ChuXe" Relationship="Self.FK__DoanhThu__IDCX__37A5467C" FromRole="DoanhThu" ToRole="ChuXe" />
           <NavigationProperty Name="NhanVien" Relationship="Self.FK__DoanhThu__IDNV__38996AB5" FromRole="DoanhThu" ToRole="NhanVien" />
         </EntityType>
@@ -426,7 +426,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__DoanhThu__IDCX__37A5467C">
-          <End Role="ChuXe" Type="Self.ChuXe" Multiplicity="1" />
+          <End Role="ChuXe" Type="Self.ChuXe" Multiplicity="0..1" />
           <End Role="DoanhThu" Type="Self.DoanhThu" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ChuXe">
@@ -462,7 +462,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__DoanhThu__IDNV__38996AB5">
-          <End Role="NhanVien" Type="Self.NhanVien" Multiplicity="1" />
+          <End Role="NhanVien" Type="Self.NhanVien" Multiplicity="0..1" />
           <End Role="DoanhThu" Type="Self.DoanhThu" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="NhanVien">

@@ -20,8 +20,8 @@ namespace Mioto.Models
         public decimal DoanhThuThang { get; set; }
         public decimal DoanhThuNam { get; set; }
         public System.DateTime NgayCapNhat { get; set; }
-        public int IDCX { get; set; }
-        public int IDNV { get; set; }
+        public Nullable<int> IDCX { get; set; }
+        public Nullable<int> IDNV { get; set; }
     
         public virtual ChuXe ChuXe { get; set; }
         public virtual NhanVien NhanVien { get; set; }

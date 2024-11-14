@@ -243,8 +243,11 @@ namespace Mioto.Controllers
                 {"ACCOUNT_NO", "0932175716" },
                 {"OWNER", "Nguyen Viet Anh" }
             };
-            var paidContent = $"MIOTO{donthuexe.IDTX.ToString()}";
+            var random = new Random();
+            var randomLetters = new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 4)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
 
+            var paidContent = $"MIOTO{donthuexe.IDTX}{randomLetters}";
             string QR = $"https://img.vietqr.io/image/{info["BANK_ID"]}-{info["ACCOUNT_NO"]}-compact2.png?amount={donthuexe.TongTien}&addInfo={paidContent}&accountName={Uri.EscapeDataString(info["OWNER"])}";
             ViewBag.QRCodeUrl = QR;
             Session["DonThueXe"] = donthuexe;

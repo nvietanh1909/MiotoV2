@@ -400,41 +400,86 @@ namespace Mioto.Controllers
                 return RedirectToAction("Login", "Account");
 
             var chuxe = Session["ChuXe"] as ChuXe;
-            var khachhang = Session["KhachHang"] as KhachHang;
             if (chuxe == null)
             {
-                var view_kh = new DoanhThu
-                {
-                    DoanhThuNgay = 0,
-                    DoanhThuTuan = 0,
-                    DoanhThuThang = 0,
-                    DoanhThuNam = 0
-                };
-                return View(view_kh);
+                ViewBag.DoanhThuNgay = 0;
+                ViewBag.DoanhThuTuan = 0;
+                ViewBag.DoanhThuThang = 0;
+                ViewBag.DoanhThuNam = 0;
+                return View();
             }
 
-            var doanhThu = db.DoanhThu.FirstOrDefault(x => x.IDCX == chuxe.IDCX);
-            if (doanhThu == null)
+            var ds_xe = db.Xe.Where(x => x.IDCX == chuxe.IDCX).Select(x => x.BienSo).ToList();
+
+            // Lấy các đơn thuê xe đã thanh toán cho các xe của chủ xe
+            var donthuexe = db.DonThueXe
+                .Where(x => ds_xe.Contains(x.BienSo) && x.TrangThaiThanhToan == 1)
+                .ToList();
+
+            var currentDate = DateTime.Now;
+
+            // Tính doanh thu theo ngày
+            decimal doanhThuNgay = donthuexe
+                .Where(x => x.TGThanhToan.Date == currentDate.Date)
+                .Sum(x => x.TongTien);
+
+            // Tính doanh thu theo tuần
+            var startOfWeek = currentDate.AddDays(-(int)currentDate.DayOfWeek);
+            decimal doanhThuTuan = donthuexe
+                .Where(x => x.TGThanhToan >= startOfWeek && x.TGThanhToan <= currentDate)
+                .Sum(x => x.TongTien);
+
+            // Tính doanh thu theo tháng
+            decimal doanhThuThang = donthuexe
+                .Where(x => x.TGThanhToan.Year == currentDate.Year &&
+                            x.TGThanhToan.Month == currentDate.Month)
+                .Sum(x => x.TongTien);
+
+            // Tính doanh thu theo năm
+            decimal doanhThuNam = donthuexe
+                .Where(x => x.TGThanhToan.Year == currentDate.Year)
+                .Sum(x => x.TongTien);
+
+            ViewBag.DoanhThuNgay = doanhThuNgay;
+            ViewBag.DoanhThuTuan = doanhThuTuan;
+            ViewBag.DoanhThuThang = doanhThuThang;
+            ViewBag.DoanhThuNam = doanhThuNam;
+
+            // Kiểm tra nếu doanh thu của chủ xe đã tồn tại
+            var doanhthu = db.DoanhThu.FirstOrDefault(x => x.IDCX == chuxe.IDCX);
+
+            if (doanhthu == null)
             {
-                doanhThu = new DoanhThu
+                // Tạo mới doanh thu nếu chưa tồn tại
+                var newDoanhThu = new DoanhThu
                 {
-                    DoanhThuNgay = 0,
-                    DoanhThuTuan = 0,
-                    DoanhThuThang = 0,
-                    DoanhThuNam = 0
+                    DoanhThuNgay = doanhThuNgay,
+                    DoanhThuTuan = doanhThuTuan,
+                    DoanhThuThang = doanhThuThang,
+                    DoanhThuNam = doanhThuNam,
+                    NgayCapNhat = DateTime.Now,
+                    IDCX = chuxe.IDCX
                 };
+                db.DoanhThu.Add(newDoanhThu);
+            }
+            else
+            {
+                // Cập nhật doanh thu nếu đã tồn tại
+                doanhthu.DoanhThuNgay = doanhThuNgay;
+                doanhthu.DoanhThuTuan = doanhThuTuan;
+                doanhthu.DoanhThuThang = doanhThuThang;
+                doanhthu.DoanhThuNam = doanhThuNam;
+                doanhthu.NgayCapNhat = DateTime.Now;
+
+                db.Entry(doanhthu).State = EntityState.Modified;
             }
 
-            var viewModel = new DoanhThu
-            {
-                DoanhThuNgay = doanhThu.DoanhThuNgay,
-                DoanhThuTuan = doanhThu.DoanhThuTuan,
-                DoanhThuThang = doanhThu.DoanhThuThang,
-                DoanhThuNam = doanhThu.DoanhThuNam
-            };
+            db.SaveChanges();
 
-            return View(viewModel);
+            return View();
         }
+
+
 
         public ActionResult Gift()
         {
