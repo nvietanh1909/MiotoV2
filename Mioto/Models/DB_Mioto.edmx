@@ -19,7 +19,7 @@
           </Key>
           <Property Name="IDDG" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="NoiDung" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="Ngay" Type="date" Nullable="false" />
+          <Property Name="Ngay" Type="datetime" Nullable="false" />
           <Property Name="IDDT" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="DoanhThu">
@@ -98,7 +98,7 @@
           </Key>
           <Property Name="IDHC" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="LoaiHuyChuyen" Type="int" Nullable="false" />
-          <Property Name="ThoiGianHuy" Type="date" Nullable="false" />
+          <Property Name="ThoiGianHuy" Type="datetime" Nullable="false" />
           <Property Name="MoTa" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="SoTienHoan" Type="decimal" Precision="15" Scale="2" Nullable="false" />
           <Property Name="IDDT" Type="int" Nullable="false" />
@@ -297,7 +297,7 @@
           </Key>
           <Property Name="IDDG" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="NoiDung" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Ngay" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Ngay" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="IDDT" Type="Int32" Nullable="false" />
           <NavigationProperty Name="DonThueXe" Relationship="Self.FK__DanhGia__IDDT__3B75D760" FromRole="DanhGia" ToRole="DonThueXe" />
         </EntityType>
@@ -388,7 +388,7 @@
           </Key>
           <Property Name="IDHC" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="LoaiHuyChuyen" Type="Int32" Nullable="false" />
-          <Property Name="ThoiGianHuy" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="ThoiGianHuy" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="MoTa" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="SoTienHoan" Type="Decimal" Precision="15" Scale="2" Nullable="false" />
           <Property Name="IDDT" Type="Int32" Nullable="false" />

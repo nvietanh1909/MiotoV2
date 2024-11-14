@@ -20,6 +20,7 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using RestSharp;
 using System.Security.Policy;
+using Microsoft.Ajax.Utilities;
 
 namespace Mioto.Controllers
 {
@@ -68,12 +69,19 @@ namespace Mioto.Controllers
             {
                 return HttpNotFound();
             }
-
             var donThueXe = db.DonThueXe.FirstOrDefault(d => d.BienSo == BienSoXe);
-            var kt_kh_thuexe = db.DonThueXe.FirstOrDefault(x => x.IDKH == khachHang.IDKH);
+            var kt_kh_thuexe = db.DonThueXe.FirstOrDefault(x => x.IDKH == khachHang.IDKH && x.TrangThaiThanhToan == 1);
             var danhGiaList = donThueXe != null
                 ? db.DanhGia.Where(d => d.IDDT == donThueXe.IDTX).ToList()
                 : new List<DanhGia>();
+
+            List<KhachHang> list_kh = new List<KhachHang>();
+            foreach (var item in danhGiaList)
+            {
+                var dtx = db.DonThueXe.FirstOrDefault(x => x.IDTX == item.IDDT);
+                var kh = db.KhachHang.FirstOrDefault(x => x.IDKH == dtx.IDKH);
+                list_kh.Add(kh);
+            }
 
             MD_InfoCar model;
             if (kt_kh_thuexe == null)
@@ -84,7 +92,8 @@ namespace Mioto.Controllers
                     DonThueXe = donThueXe,
                     DanhGia = danhGiaList,
                     ChuXe = xe.ChuXe.KhachHang,
-                    KhachHang = false
+                    KhachHang = list_kh,
+                    Check = false
                 };
             }
             else
@@ -95,13 +104,38 @@ namespace Mioto.Controllers
                     DonThueXe = donThueXe,
                     DanhGia = danhGiaList,
                     ChuXe = xe.ChuXe.KhachHang,
-                    KhachHang = true
+                    KhachHang = list_kh,
+                    Check = true
                 };
             }
             Session["StartDateTime"] = startDateTime;
             Session["EndDateTime"] = endDateTime;
+            Session["DonThueXe"] = donThueXe;
             ViewBag.ErrorMessage = TempData["ErrorMessage"];
             return View(model);
+        }
+        [HttpPost]
+        public ActionResult CarComment(string DanhGia, string BienSoXe)
+        {
+            if (string.IsNullOrWhiteSpace(DanhGia))
+            {
+                TempData["Message"] = "Vui lòng viết bình luận.";
+                return RedirectToAction("InfoCar", new { bienSoXe = BienSoXe });
+            }
+
+            var donthuexe = Session["DonThueXe"] as DonThueXe;
+            var comment = new DanhGia
+            {
+                NoiDung = DanhGia,
+                Ngay = DateTime.Now,
+                IDDT = donthuexe.IDTX
+            };
+
+            db.DanhGia.Add(comment);
+            db.SaveChanges();
+
+            TempData["Message"] = "Cảm ơn bạn đã gửi bình luận!";
+            return RedirectToAction("InfoCar", new { BienSoXe = BienSoXe });
         }
 
         public ActionResult Alert()
@@ -184,9 +218,7 @@ namespace Mioto.Controllers
                 db.SaveChanges();
             }
 
-            // Tính tổng tiền với giảm giá
             decimal tongTien = bookingCar.TongTien;
-            // Lưu đơn hàng vào cơ sở dữ liệu
             var donThueXe = new DonThueXe
             {
                 IDKH = kh.IDKH,

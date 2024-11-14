@@ -7,6 +7,59 @@
     var endDateTime = Session["EndDateTime"] as DateTime?;
 }
 @model Mioto.Models.MD_InfoCar
+<style>
+    /* Styles for comment box */
+    .comment-box {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        resize: vertical;
+        line-height: 1.5;
+        transition: all 0.3s ease-in-out;
+    }
+
+        .comment-box:focus {
+            border-color: #4CAF50;
+            outline: none;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+
+    /* Submit button style */
+    .btn {
+        background-color: #4CAF50; /* Green color */
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        .btn:active {
+            background-color: #388e3c;
+        }
+
+    /* Flexbox container for submit button */
+    .submit-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 10px;
+    }
+
+    /* Add a label for the comment box */
+    .comment-label {
+        font-size: 16px;
+        margin-bottom: 10px;
+        color: #333;
+    }
+</style>
 <div class="modal-body">
     <div class="detail-car">
         <div class="cover-car">
@@ -91,7 +144,7 @@
                                     <img src="@Url.Content("~/AvatarUser/" + (Model.ChuXe.HinhAnh?? "DefaultAvatar.jpg"))" alt="Avatar chủ xe" />
                                 </div>
 
-                                <div class="info">
+                                <div class="info" style=" justify-content: center;">
                                     <h5>@Model.ChuXe.Ten</h5>
                                     <div class="verifi"></div>
                                 </div>
@@ -115,51 +168,69 @@
                             </div>
                         </div>
                     </div>
-                    @if (Model.KhachHang)
+                    @if (Model.Check)
                     {
                         <div>
                             @using (Html.BeginForm("CarComment", "Payment", FormMethod.Post))
                             {
-                                <textarea name="DanhGia" class="comment-box" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc; resize: vertical;" placeholder="Hãy viết bình luận của bạn..." rows="4"></textarea>
+                                <textarea id="DanhGia" name="DanhGia" class="comment-box" placeholder="Hãy viết bình luận của bạn..." rows="4"></textarea>
+
                                 <input type="hidden" name="BienSoXe" value="@Model.DonThueXe.BienSo" />
-                                <div style="display: flex; justify-content: right">
+
+                                <div class="submit-container">
                                     <input type="submit" value="Gửi" class="btn" />
                                 </div>
                             }
                         </div>
+
                     }
 
-                    @foreach (var danhgia in Model.DanhGia)
+                    @foreach (var danhgia in Model.DanhGia.AsEnumerable().Reverse())
                     {
-                        <div class="info-car-desc">
-                            <div class="reviews"></div>
-                            <div class="list-reviews">
-                                <div class="item-review">
-                                    <div class="profile">
-                                        <div class="desc">
-                                            <a href="#" class="avatar avatar--m">
-                                                <img src="#" alt="Mioto - Thuê xe tự lái" />
-                                            </a>
-                                            <div class="info">
-                                                <a href="#">
-                                                    <h6></h6>
-                                                </a>
-                                            </div>
-                                            <div class="rate">
-                                                <div class="star-ratings"></div>
-                                                <div class="time">
-                                                    @danhgia.Ngay
+                        foreach (var kh in Model.KhachHang.AsEnumerable().Reverse())
+                        {
+                            <div class="info-car-desc">
+                                <div class="reviews"></div>
+                                <div class="list-reviews">
+                                    <div class="item-review">
+                                        <div class="profile">
+                                            <div class="desc">
+                                                <div class="avatar avatar--m">
+                                                    <img loading="lazy" src="@Url.Content("~/AvatarUser/" + (kh.HinhAnh ?? "DefaultAvatar.jpg"))" alt="Mioto - Thuê xe tự lái">
                                                 </div>
+                                                <div class="info" style="justify-content: center">
+                                                    <h6>@kh.Ten</h6>
+                                                    <div class="rate">
+                                                        <div class="time">
+                                                            @danhgia.Ngay
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
                                             </div>
                                         </div>
+
+                                        <pre class="main-review">@danhgia.NoiDung</pre>
                                     </div>
-                                    <pre class="main-review">@danhgia.NoiDung</pre>
                                 </div>
                             </div>
-                        </div>
+                        }
                     }
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const commentBox = document.querySelector('.comment-box');
+        if (commentBox) {
+            commentBox.addEventListener('input', function () {
+                commentBox.style.height = 'auto'; // Reset height
+                commentBox.style.height = (commentBox.scrollHeight) + 'px';
+            });
+        }
+    });
+
+</script>

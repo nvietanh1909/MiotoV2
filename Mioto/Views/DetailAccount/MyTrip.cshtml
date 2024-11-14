@@ -84,11 +84,3 @@ else
     </div>
 }
 
-@section Scripts {
-    <script type="text/javascript">
-        function viewDetails(row) {
-            var id = row.getAttribute('data-id');
-            window.location.href = '@Url.Action("OwnerDetailt", "DetailAccount")/' + id;
-        }
-    </script>
-}
