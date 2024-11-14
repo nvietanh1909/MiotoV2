@@ -40,8 +40,8 @@
             <PropertyRef Name="IDTX" />
           </Key>
           <Property Name="IDTX" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="NgayThue" Type="date" Nullable="false" />
-          <Property Name="NgayTra" Type="date" Nullable="false" />
+          <Property Name="NgayThue" Type="datetime" Nullable="false" />
+          <Property Name="NgayTra" Type="datetime" Nullable="false" />
           <Property Name="TGThanhToan" Type="datetime" Nullable="false" />
           <Property Name="TrangThaiThanhToan" Type="int" Nullable="false" />
           <Property Name="TongTien" Type="decimal" Precision="10" Scale="2" Nullable="false" />
@@ -321,8 +321,8 @@
             <PropertyRef Name="IDTX" />
           </Key>
           <Property Name="IDTX" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="NgayThue" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="NgayTra" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="NgayThue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="NgayTra" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="TGThanhToan" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="TrangThaiThanhToan" Type="Int32" Nullable="false" />
           <Property Name="TongTien" Type="Decimal" Precision="10" Scale="2" Nullable="false" />

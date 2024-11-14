@@ -543,6 +543,46 @@ namespace Mioto.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Người dùng không hợp lệ");
             }
 
+            // Xác định ngày, tháng và năm mà chuyến xe bị hủy để cập nhật doanh thu
+
+            var doanhthu = db.DoanhThu.FirstOrDefault(x => x.IDCX == chuxe.IDCX);
+            if (doanhthu != null)
+            {
+                if(donThueXe.TGThanhToan.Day == DateTime.Now.Day)
+                {
+                    doanhthu.DoanhThuNgay -= donThueXe.TongTien;
+                    if (doanhthu.DoanhThuNgay <= 0)
+                    {
+                        db.DoanhThu.Remove(doanhthu);
+                    }
+                    else
+                    {
+                        db.Entry(doanhthu).State = EntityState.Modified;
+                    }
+                }
+
+                doanhthu.DoanhThuThang -= donThueXe.TongTien;
+                if (doanhthu.DoanhThuThang <= 0)
+                {
+                    db.DoanhThu.Remove(doanhthu); // Xóa nếu doanh thu tháng <= 0
+                }
+                else
+                {
+                    db.Entry(doanhthu).State = EntityState.Modified;
+                }
+
+                doanhthu.DoanhThuNam -= donThueXe.TongTien;
+                if (doanhthu.DoanhThuNam <= 0)
+                {
+                    db.DoanhThu.Remove(doanhthu); // Xóa nếu doanh thu năm <= 0
+                }
+                else
+                {
+                    db.Entry(doanhthu).State = EntityState.Modified;
+                }
+            }
+
+
             var tokenFile = "C:\\Program Files\\IIS Express\\Json\\tokens.json";
             var tokens = JObject.Parse(System.IO.File.ReadAllText(tokenFile));
 
@@ -567,7 +607,13 @@ namespace Mioto.Controllers
 
                 foreach (var item in allEvents)
                 {
-                    if (item.Summary == donThueXe.BienSo)
+                    DateTime eventStartTime;
+                    DateTime eventEndTime;
+
+                    bool isStartValid = DateTime.TryParse(item.Start.DateTime?.ToString(), out eventStartTime);
+                    bool isEndValid = DateTime.TryParse(item.End.DateTime?.ToString(), out eventEndTime);
+
+                    if (item.Summary == donThueXe.BienSo && eventStartTime == donThueXe.NgayThue && eventEndTime == donThueXe.NgayTra)
                     {
                         identify = item.Id;
                         break;
@@ -598,6 +644,7 @@ namespace Mioto.Controllers
 
             return RedirectToAction("RentedCar");
         }
+
 
         public ActionResult DeleteTrip(int id)
         {
@@ -654,6 +701,33 @@ namespace Mioto.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Người dùng không hợp lệ");
             }
 
+            // Cập nhật doanh thu sau khi hoàn tiền
+            var xe = db.Xe.FirstOrDefault(x => x.BienSo == donThueXe.BienSo);
+            var chuxe = db.ChuXe.FirstOrDefault(x => x.IDCX == xe.IDCX);
+
+            if (chuxe != null)
+            {
+                var doanhthu = db.DoanhThu.FirstOrDefault(x => x.IDCX == chuxe.IDCX);
+                if (doanhthu != null)
+                {
+                    // Cập nhật doanh thu theo ngày, tuần, tháng và năm
+                    var transactionDate = donThueXe.TGThanhToan;
+                    if (transactionDate.Date == currentDateTime.Date)
+                        doanhthu.DoanhThuNgay -= hoanTien;
+
+                    if (transactionDate >= currentDateTime.AddDays(-(int)currentDateTime.DayOfWeek))
+                        doanhthu.DoanhThuTuan -= hoanTien;
+
+                    if (transactionDate.Month == currentDateTime.Month && transactionDate.Year == currentDateTime.Year)
+                        doanhthu.DoanhThuThang -= hoanTien;
+
+                    if (transactionDate.Year == currentDateTime.Year)
+                        doanhthu.DoanhThuNam -= hoanTien;
+
+                    db.Entry(doanhthu).State = EntityState.Modified;
+                }
+            }
+
             // Lấy access_token từ file
             var tokenFile = "C:\\Program Files\\IIS Express\\Json\\tokens.json";
             var tokens = JObject.Parse(System.IO.File.ReadAllText(tokenFile));
@@ -680,7 +754,13 @@ namespace Mioto.Controllers
 
                 foreach (var item in allEvents)
                 {
-                    if (item.Summary == donThueXe.BienSo)
+                    DateTime eventStartTime;
+                    DateTime eventEndTime;
+
+                    bool isStartValid = DateTime.TryParse(item.Start.DateTime?.ToString(), out eventStartTime);
+                    bool isEndValid = DateTime.TryParse(item.End.DateTime?.ToString(), out eventEndTime);
+
+                    if (item.Summary == donThueXe.BienSo && eventStartTime == donThueXe.NgayThue && eventEndTime == donThueXe.NgayTra)
                     {
                         identify = item.Id;
                         break;
