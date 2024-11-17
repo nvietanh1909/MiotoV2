@@ -1,0 +1,151 @@
+﻿@model Mioto.Models.NhanVien
+
+@{
+    ViewBag.Title = "EditEmployee";
+    Layout = "~/Views/Shared/_LayoutBase.cshtml";
+}
+
+<div class="modal-content" style="width: 60%;">
+    <div class="modal-header">
+        <h4 class="text-primary">Chỉnh sửa thông tin nhân viên</h4>
+        <p class="sub-title">Vui lòng điền đầy đủ thông tin để chỉnh sửa nhân viên.</p>
+    </div>
+    <div class="modal-body">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+        <div class="modal-input-body">
+
+            <!-- Họ và tên -->
+            <div class="line-form">
+                <div class="custom-input">
+                    <div class="wrap-info">
+                        <div class="title-status">
+                            <p>Họ và tên*</p>
+                        </div>
+                    </div>
+                    @Html.HiddenFor(x => x.IDNV)
+                    <div class="wrap-input">
+                        @Html.EditorFor(model => model.Ten, new { htmlAttributes = new { @class = "form-control", placeholder = "Nhập họ và tên" } })
+                        @Html.ValidationMessageFor(model => model.Ten, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ngày sinh -->
+            <div class="line-form">
+                <div class="custom-input">
+                    <div class="wrap-info">
+                        <div class="title-status">
+                            <p>Ngày sinh*</p>
+                        </div>
+                    </div>
+                    <div class="wrap-input">
+                        @Html.EditorFor(model => model.NgaySinh, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                        @Html.ValidationMessageFor(model => model.NgaySinh, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <!-- Giới tính -->
+            <div class="line-form">
+                <div class="custom-input">
+                    <div class="wrap-info">
+                        <div class="title-status">
+                            <p>Giới tính*</p>
+                        </div>
+                    </div>
+                    <div class="wrap-input">
+                        @Html.DropDownListFor(model => model.GioiTinh, (IEnumerable<SelectListItem>)ViewBag.GioiTinh, "Chọn...", new { @class = "form-control", style = "font-size: 16px; width: 100%;" })
+                        @Html.ValidationMessageFor(model => model.GioiTinh, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <!-- Số điện thoại -->
+            <div class="line-form">
+                <div class="custom-input">
+                    <div class="wrap-info">
+                        <div class="title-status">
+                            <p>Số điện thoại*</p>
+                        </div>
+                    </div>
+                    <div class="wrap-input">
+                        @Html.EditorFor(model => model.SDT, new { htmlAttributes = new { @class = "form-control", placeholder = "Nhập số điện thoại" } })
+                        @Html.ValidationMessageFor(model => model.SDT, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="line-form">
+                <div class="custom-input">
+                    <div class="wrap-info">
+                        <div class="title-status">
+                            <p>Email*</p>
+                        </div>
+                    </div>
+                    <div class="wrap-input">
+                        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", placeholder = "Nhập email" } })
+                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <!-- Địa chỉ -->
+            <div class="line-form">
+                <div class="custom-input">
+                    <div class="wrap-info">
+                        <div class="title-status">
+                            <p>Địa chỉ*</p>
+                        </div>
+                    </div>
+                    <div class="wrap-input">
+                        @Html.EditorFor(model => model.DiaChi, new { htmlAttributes = new { @class = "form-control", placeholder = "Nhập địa chỉ" } })
+                        @Html.ValidationMessageFor(model => model.DiaChi, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chức vụ -->
+            <div class="line-form">
+                <div class="custom-input">
+                    <div class="wrap-info">
+                        <div class="title-status">
+                            <p>Chức vụ*</p>
+                        </div>
+                    </div>
+                    <div class="wrap-input">
+                        @Html.DropDownListFor(model => model.ChucVu, (IEnumerable<SelectListItem>)ViewBag.ChucVu, "Chọn...", new { @class = "form-control", style = "font-size: 16px; width: 100%;" })
+                        @Html.ValidationMessageFor(model => model.ChucVu, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mật khẩu -->
+            <div class="line-form">
+                <div class="custom-input">
+                    <div class="wrap-info">
+                        <div class="title-status">
+                            <p>Mật khẩu*</p>
+                        </div>
+                    </div>
+                    <div class="wrap-input">
+                        @Html.EditorFor(model => model.MatKhau, new { htmlAttributes = new { @class = "form-control", placeholder = "Nhập mật khẩu" } })
+                        @Html.ValidationMessageFor(model => model.MatKhau, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="wrap-btn btn-register" style=" display: flex; justify-content: right; align-items: center;">
+                <div style=" display: flex; align-items: center">
+                    <a href="@Url.Action("ManagerEmployee", "Admin")" style=" margin-right: 20px;">Quay lại</a>
+                    <button type="submit" class="btn btn--m btn-primary">Cập Nhật Thông Tin Nhân Viên</button>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</div>

@@ -17,8 +17,19 @@ namespace Mioto.Controllers
     {
 
         DB_MiotoEntities db = new DB_MiotoEntities();
-        public bool IsLoggedIn { get => Session["NhanVien"] != null; }
+        public bool IsLoggedIn { get => Session["NhanVien"] != null || Session["QuanLy"] != null; }
 
+        List<SelectListItem> gioitinh = new List<SelectListItem>
+        {
+         new SelectListItem { Text = "Nam", Value = "Nam" },
+         new SelectListItem { Text = "Nữ", Value = "Nữ" }
+        };
+
+        List<SelectListItem> chucvu = new List<SelectListItem>
+        {
+         new SelectListItem { Text = "Nhân Viên", Value = "Nhân viên" },
+         new SelectListItem { Text = "Quản lý", Value = "Quản lý" }
+        };
         // GET: Admin
         public ActionResult AdminPaymentVerification()
         {
@@ -28,106 +39,29 @@ namespace Mioto.Controllers
             return View(ds_thanhtoan);
         }
 
-        //public ActionResult ApprovePayment(int idtt)
-        //{
-        //    if (!IsLoggedIn)
-        //        return RedirectToAction("Login", "Account");
-
-        //    try
-        //    {
-        //        var thanhtoan = db.DonThueXe.Find(idtx);
-        //        if (thanhtoan == null)
-        //            return HttpNotFound();
-
-        //        var donthuexe = db.DonThueXe.FirstOrDefault(x => x.IDTX == thanhtoan.IDTX);
-        //        if (donthuexe == null)
-        //            return HttpNotFound();
-
-        //        var xe = db.Xe.FirstOrDefault(x => x.BienSoXe == donthuexe.BienSoXe);
-        //        if (xe == null)
-        //            return HttpNotFound();
-
-        //        var chuxe = db.ChuXe.FirstOrDefault(x => x.IDCX == xe.IDCX);
-        //        if (chuxe == null)
-        //            return HttpNotFound();
-
-        //        thanhtoan.TrangThai = "Đã thanh toán";
-        //        db.Entry(thanhtoan).State = EntityState.Modified;
-
-        //        var doanhThuChuXe = db.DoanhThuChuXe.FirstOrDefault(d => d.IDCX == chuxe.IDCX);
-        //        if (doanhThuChuXe == null)
-        //        {
-        //            doanhThuChuXe = new DoanhThuChuXe
-        //            {
-        //                IDCX = chuxe.IDCX,
-        //                DoanhThuNgay = 0,
-        //                DoanhThuTuan = 0,
-        //                DoanhThuThang = 0,
-        //                DoanhThuNam = 0,
-        //                NgayCapNhat = DateTime.Now,
-        //                SoTuanTrongNam = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(DateTime.Now, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday)
-        //            };
-        //            db.DoanhThuChuXe.Add(doanhThuChuXe);
-        //            db.SaveChanges();
-        //        }
-
-        //        var ngayHienTai = DateTime.Now;
-        //        var soTienThanhToan = thanhtoan.SoTien;
-
-        //        if (doanhThuChuXe.NgayCapNhat.Day != ngayHienTai.Day)
-        //        {
-        //            doanhThuChuXe.DoanhThuNgay = 0;
-        //            doanhThuChuXe.NgayCapNhat = ngayHienTai;
-        //        }
-        //        doanhThuChuXe.DoanhThuNgay += soTienThanhToan;
-
-        //        var soTuanTrongNam = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(ngayHienTai, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-        //        if (doanhThuChuXe.SoTuanTrongNam != soTuanTrongNam)
-        //        {
-        //            doanhThuChuXe.DoanhThuTuan = 0;
-        //            doanhThuChuXe.SoTuanTrongNam = soTuanTrongNam;
-        //        }
-        //        doanhThuChuXe.DoanhThuTuan += soTienThanhToan;
-
-        //        if (doanhThuChuXe.NgayCapNhat.Month != ngayHienTai.Month)
-        //        {
-        //            doanhThuChuXe.DoanhThuThang = 0;
-        //        }
-        //        doanhThuChuXe.DoanhThuThang += soTienThanhToan;
-
-        //        if (doanhThuChuXe.NgayCapNhat.Year != ngayHienTai.Year)
-        //        {
-        //            doanhThuChuXe.DoanhThuNam = 0;
-        //        }
-        //        doanhThuChuXe.DoanhThuNam += soTienThanhToan;
-
-        //        db.Entry(doanhThuChuXe).State = EntityState.Modified;
-        //        db.SaveChanges();
-
-        //        return RedirectToAction("AdminPaymentVerification");
-        //    }
-        //    catch (DbUpdateConcurrencyException ex)
-        //    {
-        //        ModelState.AddModelError("", "Xảy ra lỗi đồng bộ hóa lạc quan: " + ex.Message);
-        //        return RedirectToAction("AdminPaymentVerification");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ModelState.AddModelError("", "Xảy ra lỗi: " + ex.Message);
-        //        return RedirectToAction("AdminPaymentVerification");
-        //    }
-        //}
 
         // GET: DetailAccount
         public ActionResult InfoAccount()
         {
             if (!IsLoggedIn)
                 return RedirectToAction("Login", "Account");
-            var guest = Session["NhanVien"] as NhanVien;
-            if (guest == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Khách hàng không tồn tại");
-            var kh = db.KhachHang.Where(x => x.IDKH == guest.IDNV);
-            return View(kh);
+            var nhanvien = Session["NhanVien"] as NhanVien;
+            var quanly = Session["QuanLy"] as NhanVien;
+            
+            if(nhanvien != null)
+            {
+                var nv = db.NhanVien.FirstOrDefault(x => x.IDNV == nhanvien.IDNV);
+                Session["NhanVien"] = nhanvien;
+                return View(nhanvien);
+            }
+
+            if (quanly != null)
+            {
+                var ql = db.NhanVien.FirstOrDefault(x => x.IDNV == quanly.IDNV);
+                Session["QuanLy"] = quanly;
+                return View(quanly);
+            }
+            return View();
         }
 
         // Thay đổi avatar user
@@ -335,126 +269,111 @@ namespace Mioto.Controllers
             if (!IsLoggedIn)
                 return RedirectToAction("Login", "Account");
 
-            // Lấy ID từ Session NhanVien đang đăng nhập hiện tại
+            // Lấy ID từ Session của nhân viên đang đăng nhập hiện tại
             var nhanvien = Session["NhanVien"] as NhanVien;
 
-            // Lấy ngày, tuần, tháng, năm hiện tại
-            var ngayHienTai = DateTime.Now;
-            var tuanHienTai = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(ngayHienTai, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-            var thangHienTai = ngayHienTai.Month;
-            var namHienTai = ngayHienTai.Year;
-
-            // Tính doanh thu công ty theo ngày, tuần, tháng, năm
-            var thanhToanDaThanhToan = db.DonThueXe
-                                         .Where(x => x.TrangThaiThanhToan == 1)
-                                         .ToList();
-
-            decimal doanhThuNgay = 0;
-            decimal doanhThuTuan = 0;
-            decimal doanhThuThang = 0;
-            decimal doanhThuNam = 0;
-
-            foreach (var thanhToan in thanhToanDaThanhToan)
+            if (nhanvien == null)
             {
-                var donThueXe = db.DonThueXe.FirstOrDefault(x => x.IDTX == thanhToan.IDTX);
-                if (donThueXe != null)
-                {
-                    decimal hoaHong = thanhToan.TongTien * (donThueXe.PhanTramHoaHong / 100);
-
-                    // Xác định thời gian của giao dịch
-                    var ngayGiaoDich = thanhToan.NgayTra;
-                    var tuanGiaoDich = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(ngayGiaoDich, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-                    var thangGiaoDich = ngayGiaoDich.Month;
-                    var namGiaoDich = ngayGiaoDich.Year;
-
-                    if (ngayGiaoDich.Date == ngayHienTai.Date)
-                        doanhThuNgay += hoaHong;
-
-                    if (tuanGiaoDich == tuanHienTai && namGiaoDich == namHienTai)
-                        doanhThuTuan += hoaHong;
-
-                    if (thangGiaoDich == thangHienTai && namGiaoDich == namHienTai)
-                        doanhThuThang += hoaHong;
-
-                    if (namGiaoDich == namHienTai)
-                        doanhThuNam += hoaHong;
-                }
+                ViewBag.DoanhThuNgay = 0;
+                ViewBag.DoanhThuTuan = 0;
+                ViewBag.DoanhThuThang = 0;
+                ViewBag.DoanhThuNam = 0;
+                return View();
             }
 
-            // Kiểm tra xem đã có doanh thu công ty trong cơ sở dữ liệu chưa
-            var doanhThuCongTy = db.DoanhThu
-                .FirstOrDefault(d =>
-                    d.NgayCapNhat.Year == namHienTai &&
-                    d.NgayCapNhat.Month == thangHienTai &&
-                    d.NgayCapNhat.Day == ngayHienTai.Day);
+            var donthuexe = db.DonThueXe
+              .Where(x => x.TrangThaiThanhToan == 1)
+              .ToList();
 
-            if (doanhThuCongTy == null)
+            var currentDate = DateTime.Now;
+
+            // Tính doanh thu theo ngày
+            decimal doanhThuNgay = donthuexe
+                .Where(x => x.TGThanhToan.Date == currentDate.Date)
+                .Sum(x => x.TongTien * x.PhanTramHoaHong/100);
+
+            // Tính doanh thu theo tuần
+            var startOfWeek = currentDate.AddDays(-(int)currentDate.DayOfWeek);
+            decimal doanhThuTuan = donthuexe
+                .Where(x => x.TGThanhToan >= startOfWeek && x.TGThanhToan <= currentDate)
+                .Sum(x => x.TongTien * x.PhanTramHoaHong / 100);
+
+            // Tính doanh thu theo tháng
+            decimal doanhThuThang = donthuexe
+                .Where(x => x.TGThanhToan.Year == currentDate.Year &&
+                            x.TGThanhToan.Month == currentDate.Month)
+                .Sum(x => x.TongTien * x.PhanTramHoaHong / 100);
+
+            // Tính doanh thu theo năm
+            decimal doanhThuNam = donthuexe
+                .Where(x => x.TGThanhToan.Year == currentDate.Year)
+                .Sum(x => x.TongTien * x.PhanTramHoaHong / 100);
+
+            ViewBag.DoanhThuNgay = doanhThuNgay;
+            ViewBag.DoanhThuTuan = doanhThuTuan;
+            ViewBag.DoanhThuThang = doanhThuThang;
+            ViewBag.DoanhThuNam = doanhThuNam;
+
+            // Kiểm tra nếu doanh thu của công ty đã tồn tại
+            var doanhthu = db.DoanhThu.FirstOrDefault(x => x.IDCX == null); // Để trống hoặc đặc biệt cho công ty
+
+            if (doanhthu == null)
             {
-                // Nếu chưa có, tạo mới và lưu vào cơ sở dữ liệu
-                doanhThuCongTy = new DoanhThu
+                // Tạo mới doanh thu nếu chưa tồn tại
+                var newDoanhThu = new DoanhThu
                 {
-                    IDNV = nhanvien.IDNV,
                     DoanhThuNgay = doanhThuNgay,
                     DoanhThuTuan = doanhThuTuan,
                     DoanhThuThang = doanhThuThang,
                     DoanhThuNam = doanhThuNam,
-                    NgayCapNhat = ngayHienTai
+                    NgayCapNhat = DateTime.Now,
+                    IDNV = nhanvien.IDNV
                 };
-                db.DoanhThu.Add(doanhThuCongTy);
+                db.DoanhThu.Add(newDoanhThu);
             }
             else
             {
-                // Cập nhật doanh thu hiện tại
-                doanhThuCongTy.DoanhThuNgay = doanhThuNgay;
-                doanhThuCongTy.DoanhThuTuan = doanhThuTuan;
-                doanhThuCongTy.DoanhThuThang = doanhThuThang;
-                doanhThuCongTy.DoanhThuNam = doanhThuNam;
-                doanhThuCongTy.NgayCapNhat = ngayHienTai;
-                db.Entry(doanhThuCongTy).State = EntityState.Modified;
+                // Cập nhật doanh thu nếu đã tồn tại
+                doanhthu.DoanhThuNgay = doanhThuNgay;
+                doanhthu.DoanhThuTuan = doanhThuTuan;
+                doanhthu.DoanhThuThang = doanhThuThang;
+                doanhthu.DoanhThuNam = doanhThuNam;
+                doanhthu.NgayCapNhat = DateTime.Now;
+                doanhthu.IDNV = nhanvien.IDNV;
+
+                db.Entry(doanhthu).State = EntityState.Modified;
             }
 
             db.SaveChanges();
-
-            // Truyền dữ liệu doanh thu tới ViewModel
-            var model = new DoanhThu
-            {
-                DoanhThuNgay = doanhThuCongTy.DoanhThuNgay,
-                DoanhThuTuan = doanhThuCongTy.DoanhThuTuan,
-                DoanhThuThang = doanhThuCongTy.DoanhThuThang,
-                DoanhThuNam = doanhThuCongTy.DoanhThuNam
-            };
-
-            return View(model);
-        }
-        public ActionResult ManagerEmployee()
-        {
-            return View(db.NhanVien.ToList());
-        }
-
-        // GET: NhanVien/Details/5
-        public ActionResult DetailsEmployee(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            NhanVien nhanVien = db.NhanVien.Find(id);
-            if (nhanVien == null)
-            {
-                return HttpNotFound();
-            }
-            return View(nhanVien);
-        }
-
-        // GET: NhanVien/Create
-        public ActionResult CreateEmployee()
-        {
             return View();
         }
 
-        // POST: NhanVien/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        public ActionResult ManagerEmployee()
+        {
+            if (!IsLoggedIn)
+                return RedirectToAction("Login", "Account");
+            return View(db.NhanVien.ToList());
+        }
+        public ActionResult ManagerGuest()
+        {
+            if (!IsLoggedIn)
+                return RedirectToAction("Login", "Account");
+
+            return View(db.KhachHang.ToList());
+        }
+        
+
+        public ActionResult CreateEmployee()
+        {
+            if (!IsLoggedIn)
+                return RedirectToAction("Login", "Account");
+
+            ViewBag.GioiTinh = gioitinh;
+            ViewBag.ChucVu = chucvu;
+            return View();
+        }
+
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreateEmployee([Bind(Include = "IDNV,Ten,Email,DiaChi,NgaySinh,HinhAnh,ChucVu,GioiTinh,SDT,MatKhau")] NhanVien nhanVien)
@@ -472,6 +391,9 @@ namespace Mioto.Controllers
         // GET: NhanVien/Edit/5
         public ActionResult EditEmployee(int? id)
         {
+            if (!IsLoggedIn)
+                return RedirectToAction("Login", "Account");
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -481,6 +403,8 @@ namespace Mioto.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.GioiTinh = gioitinh;
+            ViewBag.ChucVu = chucvu;
             return View(nhanVien);
         }
 
@@ -509,29 +433,10 @@ namespace Mioto.Controllers
             {
                 return HttpNotFound();
             }
-            return View(nhanVien);
-        }
-
-        // POST: NhanVien/Delete/5
-        [HttpPost, ActionName("DeleteEmployee")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            NhanVien nhanVien = db.NhanVien.Find(id);
             db.NhanVien.Remove(nhanVien);
             db.SaveChanges();
             return RedirectToAction("ManagerEmployee");
         }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
 
         // GET: ChuXe
         public ActionResult ManagerOwner()

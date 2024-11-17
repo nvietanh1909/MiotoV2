@@ -82,6 +82,7 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
 
 <#
         foreach(var complexProperty in complexProperties)
+
         {
 #>
     <#=codeStringGenerator.Property(complexProperty)#>

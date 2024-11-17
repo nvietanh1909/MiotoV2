@@ -10,6 +10,7 @@ using System.Web.Security;
 using System.Linq.Expressions;
 using System.Net.Mail;
 using System.Net;
+using Newtonsoft.Json.Linq;
 
 namespace Mioto.Controllers
 {
@@ -36,9 +37,17 @@ namespace Mioto.Controllers
         public ActionResult Login(MD_Login _user)
         {
             var IsGuest = db.KhachHang.SingleOrDefault(s => s.Email == _user.Email && s.MatKhau == _user.MatKhau);
-            var IsNhanVien = db.NhanVien.SingleOrDefault(s => s.Email == _user.Email && s.MatKhau == _user.MatKhau);
+            var IsNhanVien = db.NhanVien
+                .SingleOrDefault(s => s.Email == _user.Email
+                                      && s.MatKhau == _user.MatKhau
+                                      && s.ChucVu.Equals("Nhân viên", StringComparison.OrdinalIgnoreCase));
+            var IsQuanLy = db.NhanVien
+                .SingleOrDefault(s => s.Email == _user.Email
+                                      && s.MatKhau == _user.MatKhau
+                                      && s.ChucVu.Equals("Quản lý", StringComparison.OrdinalIgnoreCase));
+
             // Khách hàng
-            if(IsGuest != null)
+            if (IsGuest != null)
             {
                 var IsChuXe = db.ChuXe.SingleOrDefault(x => x.IDKH == IsGuest.IDKH);
                 if(IsChuXe != null)
@@ -46,6 +55,7 @@ namespace Mioto.Controllers
                     Session["KhachHang"] = IsGuest;
                     Session["ChuXe"] = IsChuXe;
                     Session["NhanVien"] = IsNhanVien;
+                    Session["QuanLy"] = IsQuanLy;
                     return RedirectToAction("Home", "Home");
                 }
                 Session["KhachHang"] = IsGuest;
@@ -58,7 +68,14 @@ namespace Mioto.Controllers
                 Session["NhanVien"] = IsNhanVien;
                 return RedirectToAction("Home", "Home");
             }
-            
+
+            // Quản lý
+            if (IsQuanLy != null)
+            {
+                Session["QuanLy"] = IsQuanLy;
+                return RedirectToAction("Home", "Home");
+            }
+
             ViewBag.ErrorLogin = "Email hoặc mật khẩu không chính xác";
             return View();
         }

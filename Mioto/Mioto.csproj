@@ -312,7 +312,6 @@
     <Compile Include="Models\MD_ChuXe.cs" />
     <Compile Include="Models\MD_InfoCar.cs" />
     <Compile Include="Models\MD_Login.cs" />
-    <Compile Include="Models\MD_MaGiamGia.cs" />
     <Compile Include="Models\MD_MyTrip.cs" />
     <Compile Include="Models\MD_Register.cs" />
     <Compile Include="Models\MD_RentedCar.cs" />
@@ -545,7 +544,6 @@
     <Content Include="Views\DetailAccount\RentedCar.cshtml" />
     <Content Include="Views\DetailAccount\RevenueChart.cshtml" />
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
-    <Content Include="Views\Admin\AdminPaymentVerification.cshtml" />
     <Content Include="Views\Admin\InfoAccount.cshtml" />
     <Content Include="Views\Admin\ManagerDiscount.cshtml" />
     <Content Include="Views\Admin\AddDiscount.cshtml" />
@@ -564,6 +562,9 @@
     <Content Include="Views\CalendarEvent\UpdateEvent.cshtml" />
     <Content Include="Views\Payment\QRPayment.cshtml" />
     <Content Include="Views\Account\VerifyOtp.cshtml" />
+    <Content Include="Views\Admin\ManagerEmployee.cshtml" />
+    <Content Include="Views\Admin\CreateEmployee.cshtml" />
+    <Content Include="Views\Admin\EditEmployee.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

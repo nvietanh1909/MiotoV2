@@ -70,9 +70,27 @@ namespace Mioto.Controllers
                 return HttpNotFound();
             }
             var donThueXe = db.DonThueXe.FirstOrDefault(d => d.BienSo == BienSoXe);
-            var kt_kh_thuexe = db.DonThueXe.FirstOrDefault(x => x.IDKH == khachHang.IDKH && x.TrangThaiThanhToan == 1);
+            var kt_kh_thuexe = db.DonThueXe.FirstOrDefault(x => x.IDKH == khachHang.IDKH && x.TrangThaiThanhToan == 1 && x.BienSo == BienSoXe);
+            var ds_don_thue_xe = db.DonThueXe.Where(x => x.BienSo == BienSoXe).ToList();
+
+            //List<DanhGia> danhGiaList = new List<DanhGia>();
+
+            //foreach (var item in ds_don_thue_xe)
+            //{
+            //    var check = db.DanhGia.FirstOrDefault(x => x.IDDT == item.IDTX);
+            //    danhGiaList.Add(check);
+            //}
+
+            //List<KhachHang> list_kh = new List<KhachHang>();
+            //foreach (var item in danhGiaList)
+            //{
+            //    var dtx = db.DonThueXe.FirstOrDefault(x => x.IDTX == item.IDDT);
+            //    var kh = db.KhachHang.FirstOrDefault(x => x.IDKH == dtx.IDKH);
+            //    list_kh.Add(kh);
+            //}
+
             var danhGiaList = donThueXe != null
-                ? db.DanhGia.Where(d => d.IDDT == donThueXe.IDTX).ToList()
+                ? db.DanhGia.Where(d => d.IDDT == donThueXe.IDTX && donThueXe.BienSo == BienSoXe).ToList()
                 : new List<DanhGia>();
 
             List<KhachHang> list_kh = new List<KhachHang>();
@@ -122,13 +140,13 @@ namespace Mioto.Controllers
                 TempData["Message"] = "Vui lòng viết bình luận.";
                 return RedirectToAction("InfoCar", new { bienSoXe = BienSoXe });
             }
-
-            var donthuexe = Session["DonThueXe"] as DonThueXe;
+            var khachHang = Session["KhachHang"] as KhachHang;
+            var kt_kh_thuexe = db.DonThueXe.FirstOrDefault(x => x.IDKH == khachHang.IDKH && x.TrangThaiThanhToan == 1 && x.BienSo == BienSoXe);
             var comment = new DanhGia
             {
                 NoiDung = DanhGia,
                 Ngay = DateTime.Now,
-                IDDT = donthuexe.IDTX
+                IDDT = kt_kh_thuexe.IDTX
             };
 
             db.DanhGia.Add(comment);
@@ -244,7 +262,6 @@ namespace Mioto.Controllers
         public JsonResult ApplyDiscount(string discountCode, decimal totalPrice)
         {
             var discount = db.MaGiamGia.FirstOrDefault(m => m.MaGG == discountCode && m.NgayKetThuc >= DateTime.Now);
-
             if (discount != null)
             {
                 decimal discountPercentage = Convert.ToDecimal(discount.PhanTramGiam);
@@ -255,7 +272,7 @@ namespace Mioto.Controllers
                 db.Entry(discount).State = EntityState.Modified;
                 db.SaveChanges();
 
-                return Json(new { success = true, newTotalPrice = newTotalPrice, discount = discount.PhanTramGiam }); 
+                return Json(new { success = true, newTotalPrice = newTotalPrice, discount = discount.PhanTramGiam });
             }
             else
             {
