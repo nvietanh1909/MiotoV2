@@ -312,6 +312,7 @@
     <Compile Include="Models\MD_ChuXe.cs" />
     <Compile Include="Models\MD_InfoCar.cs" />
     <Compile Include="Models\MD_Login.cs" />
+    <Compile Include="Models\MD_ManagerGuest.cs" />
     <Compile Include="Models\MD_MyTrip.cs" />
     <Compile Include="Models\MD_Register.cs" />
     <Compile Include="Models\MD_RentedCar.cs" />
@@ -565,6 +566,8 @@
     <Content Include="Views\Admin\ManagerEmployee.cshtml" />
     <Content Include="Views\Admin\CreateEmployee.cshtml" />
     <Content Include="Views\Admin\EditEmployee.cshtml" />
+    <Content Include="Views\Admin\ManagerGuest.cshtml" />
+    <Content Include="Views\Admin\ManagerCar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

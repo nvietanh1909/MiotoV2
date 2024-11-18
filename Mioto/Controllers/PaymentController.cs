@@ -69,37 +69,33 @@ namespace Mioto.Controllers
             {
                 return HttpNotFound();
             }
+
             var donThueXe = db.DonThueXe.FirstOrDefault(d => d.BienSo == BienSoXe);
-            var kt_kh_thuexe = db.DonThueXe.FirstOrDefault(x => x.IDKH == khachHang.IDKH && x.TrangThaiThanhToan == 1 && x.BienSo == BienSoXe);
-            var ds_don_thue_xe = db.DonThueXe.Where(x => x.BienSo == BienSoXe).ToList();
+            var kt_kh_thuexe = db.DonThueXe
+                .FirstOrDefault(x => x.IDKH == khachHang.IDKH && x.TrangThaiThanhToan == 1 && x.BienSo == BienSoXe);
 
-            //List<DanhGia> danhGiaList = new List<DanhGia>();
+            var ds_don_thue_xe = db.DonThueXe
+                .Where(x => x.BienSo == BienSoXe && x.TrangThaiThanhToan == 1)
+                .ToList();
 
-            //foreach (var item in ds_don_thue_xe)
-            //{
-            //    var check = db.DanhGia.FirstOrDefault(x => x.IDDT == item.IDTX);
-            //    danhGiaList.Add(check);
-            //}
+            // Lấy danh sách IDTX
+            var dsIDTX = ds_don_thue_xe.Select(dtx => dtx.IDTX).ToList();
 
-            //List<KhachHang> list_kh = new List<KhachHang>();
-            //foreach (var item in danhGiaList)
-            //{
-            //    var dtx = db.DonThueXe.FirstOrDefault(x => x.IDTX == item.IDDT);
-            //    var kh = db.KhachHang.FirstOrDefault(x => x.IDKH == dtx.IDKH);
-            //    list_kh.Add(kh);
-            //}
+            // Lấy danh sách đánh giá
+            var danhGiaList = db.DanhGia
+                .Where(dg => dsIDTX.Contains(dg.IDDT))
+                .ToList();
 
-            var danhGiaList = donThueXe != null
-                ? db.DanhGia.Where(d => d.IDDT == donThueXe.IDTX && donThueXe.BienSo == BienSoXe).ToList()
-                : new List<DanhGia>();
+            // Lấy danh sách IDKH từ DonThueXe
+            var danhSachIDKH = db.DonThueXe
+                .Where(dtx => dsIDTX.Contains(dtx.IDTX))
+                .Select(dtx => dtx.IDKH)
+                .ToList();
 
-            List<KhachHang> list_kh = new List<KhachHang>();
-            foreach (var item in danhGiaList)
-            {
-                var dtx = db.DonThueXe.FirstOrDefault(x => x.IDTX == item.IDDT);
-                var kh = db.KhachHang.FirstOrDefault(x => x.IDKH == dtx.IDKH);
-                list_kh.Add(kh);
-            }
+            // Lấy danh sách khách hàng
+            var list_kh = db.KhachHang
+                .Where(kh => danhSachIDKH.Contains(kh.IDKH))
+                .ToList();
 
             MD_InfoCar model;
             if (kt_kh_thuexe == null)
@@ -126,12 +122,15 @@ namespace Mioto.Controllers
                     Check = true
                 };
             }
+
             Session["StartDateTime"] = startDateTime;
             Session["EndDateTime"] = endDateTime;
             Session["DonThueXe"] = donThueXe;
             ViewBag.ErrorMessage = TempData["ErrorMessage"];
             return View(model);
         }
+
+
         [HttpPost]
         public ActionResult CarComment(string DanhGia, string BienSoXe)
         {

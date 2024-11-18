@@ -221,7 +221,6 @@ namespace Mioto.Controllers
 
                     db.Entry(existingDiscount).State = EntityState.Modified;
                     db.SaveChanges();
-
                     return RedirectToAction("ManagerDiscount");
                 }
                 catch (Exception ex)
@@ -271,8 +270,11 @@ namespace Mioto.Controllers
 
             // Lấy ID từ Session của nhân viên đang đăng nhập hiện tại
             var nhanvien = Session["NhanVien"] as NhanVien;
+            var quanly = Session["QuanLy"] as NhanVien;
 
-            if (nhanvien == null)
+            if (nhanvien == null) nhanvien = quanly;
+
+            if (nhanvien == null && quanly == null)
             {
                 ViewBag.DoanhThuNgay = 0;
                 ViewBag.DoanhThuTuan = 0;
@@ -354,14 +356,6 @@ namespace Mioto.Controllers
                 return RedirectToAction("Login", "Account");
             return View(db.NhanVien.ToList());
         }
-        public ActionResult ManagerGuest()
-        {
-            if (!IsLoggedIn)
-                return RedirectToAction("Login", "Account");
-
-            return View(db.KhachHang.ToList());
-        }
-        
 
         public ActionResult CreateEmployee()
         {
@@ -412,6 +406,8 @@ namespace Mioto.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditEmployee([Bind(Include = "IDNV,Ten,Email,DiaChi,NgaySinh,HinhAnh,ChucVu,GioiTinh,SDT,MatKhau")] NhanVien nhanVien)
         {
+            if (!IsLoggedIn)
+                return RedirectToAction("Login", "Account");
             if (ModelState.IsValid)
             {
                 db.Entry(nhanVien).State = EntityState.Modified;
@@ -424,6 +420,8 @@ namespace Mioto.Controllers
         // GET: NhanVien/Delete/5
         public ActionResult DeleteEmployee(int? id)
         {
+            if (!IsLoggedIn)
+                return RedirectToAction("Login", "Account");
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -439,14 +437,22 @@ namespace Mioto.Controllers
         }
 
         // GET: ChuXe
-        public ActionResult ManagerOwner()
+        public ActionResult ManagerGuest()
         {
-            //Lấy danh sách các khách hàng là chủ xe
-            var chuXeList = db.ChuXe.Include(cx => cx.KhachHang).ToList();
-
-
-            return View(chuXeList);
+            if (!IsLoggedIn)
+                return RedirectToAction("Login", "Account");
+            //Lấy danh sách khách hàng
+            var khachhang = db.KhachHang.ToList();
+            return View(khachhang);
         }
 
+        public ActionResult ManagerCar()
+        {
+            if (!IsLoggedIn)
+                return RedirectToAction("Login", "Account");
+            //Lấy danh sách khách hàng
+            var xe = db.Xe.ToList();
+            return View(xe);
+        }
     }
 }

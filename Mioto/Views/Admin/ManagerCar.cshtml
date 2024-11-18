@@ -1,0 +1,54 @@
+﻿@model IEnumerable<Mioto.Models.Xe>
+
+@{
+    ViewBag.Title = "ManagerCar";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<link href="~/Content/css/table.css" rel="stylesheet" />
+
+<div class="title" style="display: flex; justify-content: space-between;">
+    <div class="title-item">
+        <h5>Danh sách xe</h5>
+    </div>
+    <a href="@Url.Action("CreateCar", "Admin")" class="btn btn-primary" style="font-weight: 300;">Thêm xe mới</a>
+</div>
+
+<div class="table100 ver2 m-b-110">
+    <table data-vertable="ver2">
+        <thead>
+            <tr class="row100 head" style="color: white; font-weight: 500;">
+                <th class="column100 column1">Hãng xe</th>
+                <th class="column100 column3">Biển số</th>
+                <th class="column100 column2">Màu</th>
+                <th class="column100 column4">Khu vực</th>
+                <th class="column100 column4">Giá thuê</th>
+                <th class="column100 column4">Trạng thái</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                foreach (var car in Model)
+                {
+                    <tr class="row100">
+                        <td class="column100 column1">@car.HangXe</td>
+                        <td class="column100 column4">@car.BienSo</td>
+                        <td class="column100 column4">@car.Mau</td>
+                        <td class="column100 column5">@car.KhuVuc</td>
+                        <td class="column100 column5">@string.Format("{0:N0} VND", car.GiaThue)</td>
+                        <td class="column100 column5">@car.TrangThaiThue</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr class="row100">
+                    <td colspan="6" class="column100" style="text-align: center;">
+                        Không có dữ liệu để hiển thị.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

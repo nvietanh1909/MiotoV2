@@ -1,0 +1,53 @@
+﻿@model IEnumerable<Mioto.Models.KhachHang>
+
+@{
+    ViewBag.Title = "ManagerGuest";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<link href="~/Content/css/table.css" rel="stylesheet" />
+
+<div class="title" style="display: flex; justify-content: space-between;">
+    <div class="title-item">
+        <h5>Danh sách khách hàng</h5>
+    </div>
+</div>
+
+<div class="table100 ver2 m-b-110">
+    <table data-vertable="ver2">
+        <thead>
+            <tr class="row100 head" style="color: white; font-weight: 500;">
+                <th class="column100 column1">Tên</th>
+                <th class="column100 column2">Email</th>
+                <th class="column100 column3">Giới tính</th>
+                <th class="column100 column3">Số điện thoại</th>
+                <th class="column100 column5">Địa chỉ</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Hiển thị dữ liệu -->
+            @if (Model.Any())
+            {
+                <!-- Hiển thị chủ xe trước -->
+                foreach (var guest in Model)
+                {
+                    <tr class="row100">
+                        <td class="column100 column1">@guest.Ten</td>
+                        <td class="column100 column2">@guest.Email</td>
+                        <td class="column100 column3">@guest.GioiTinh</td>
+                        <td class="column100 column3">@guest.SDT</td>
+                        <td class="column100 column3">@guest.DiaChi</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr class="row100">
+                    <td colspan="5" class="column100" style="text-align: center;">
+                        Không có dữ liệu để hiển thị.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

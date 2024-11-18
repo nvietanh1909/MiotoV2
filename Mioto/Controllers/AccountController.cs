@@ -149,8 +149,6 @@ namespace Mioto.Controllers
 
         public ActionResult VerifyOtp()
         {
-            
-
             return View();
         }
 
