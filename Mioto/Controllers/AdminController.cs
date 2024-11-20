@@ -450,9 +450,17 @@ namespace Mioto.Controllers
         {
             if (!IsLoggedIn)
                 return RedirectToAction("Login", "Account");
-            //Lấy danh sách khách hàng
+            //Lấy danh sách xe
             var xe = db.Xe.ToList();
             return View(xe);
+        }
+
+        public ActionResult ManagerPaid()
+        {
+            if (!IsLoggedIn)
+                return RedirectToAction("Login", "Account");
+            var donthuexe = db.DonThueXe.ToList();
+            return View(donthuexe);
         }
     }
 }

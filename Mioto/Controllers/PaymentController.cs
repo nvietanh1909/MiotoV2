@@ -19,8 +19,6 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using RestSharp;
-using System.Security.Policy;
-using Microsoft.Ajax.Utilities;
 
 namespace Mioto.Controllers
 {

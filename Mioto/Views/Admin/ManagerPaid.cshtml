@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Mioto.Models.DonThueXe>
+@{
+    ViewBag.Title = "ManagerPaid";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<link href="~/Content/css/table.css" rel="stylesheet" />
+
+<div class="title" style="display: flex; justify-content: space-between;">
+    <div class="title-item">
+        <h5>Danh sách hóa đơn đã thanh toán</h5>
+    </div>
+</div>
+
+<div class="table100 ver2 m-b-110">
+    <table data-vertable="ver2">
+        <thead>
+            <tr class="row100 head" style="color: white; font-weight: 500;">
+                <th class="column100 column1">Mã hóa đơn</th>
+                <th class="column100 column6">Ngày thanh toán</th>
+                <th class="column100 column4">Tổng tiền</th>
+                <th class="column100 column4">Trạng thái</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var payment in Model)
+                {
+                    <tr class="row100">
+                        <td class="column100 column1">@payment.IDTX</td>
+                        <td class="column100 column3">@payment.TGThanhToan</td>
+                        <td class="column100 column4">@string.Format("{0:N0} VND", payment.TongTien)</td>
+                        <td class="column100 column5">@if(@payment.TrangThaiThanhToan == 1)
+                        { <span>Đã thanh toán</span>}
+                        else if(@payment.TrangThaiThanhToan == 2) { <span>Đã hủy</span>}
+                        else { <span>Chưa thanh toán</span>}
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr class="row100">
+                    <td colspan="5" class="column100" style="text-align: center;">
+                        Không có dữ liệu để hiển thị.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

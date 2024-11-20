@@ -84,10 +84,8 @@ namespace Mioto.Controllers
                 {
                     var guest = Session["KhachHang"] as KhachHang;
                     var chuxe = Session["ChuXe"] as ChuXe;
-                    kh.GPLX = guest.GPLX;
                     kh.MatKhau = guest.MatKhau;
                     kh.IDKH = kh.IDKH;
-                    kh.CCCD = guest.CCCD;
                     kh.HinhAnh = guest.HinhAnh;
                     db.Entry(kh).State = EntityState.Modified;
                     db.SaveChanges();

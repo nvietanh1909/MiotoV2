@@ -36,24 +36,26 @@
                                 <p>Căn cước công dân</p>
                             </div>
                         </div>
-                        @if (Model.CCCD == "0")
-                        {
-                            <div class="wrap-input disabled">
-                                <div class="wrap-text">
-                                    <input disabled="" type="text" placeholder="Chưa xác thực CCCD" value="">
-                                </div>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="wrap-input disabled">
-                                <div class="wrap-text">
-                                    <input disabled="" type="text" placeholder="@Model.CCCD" value="">
-                                </div>
-                            </div>
-                        }
+                        <div class="wrap-input">
+                            @Html.EditorFor(model => model.CCCD, new { htmlAttributes = new { @class = "form-control", placeholder = "CCCD của bạn" } })
+                            @Html.ValidationMessageFor(model => model.CCCD, "", new { @class = "text-danger" })
+                        </div>
                     </div>
                 </div>
+                <div class="line-form">
+                    <div class="custom-input">
+                        <div class="wrap-info">
+                            <div class="title-status">
+                                <p>Giấy phép lái xe</p>
+                            </div>
+                        </div>
+                        <div class="wrap-input">
+                            @Html.EditorFor(model => model.GPLX, new { htmlAttributes = new { @class = "form-control", placeholder = "GPLX của bạn" } })
+                            @Html.ValidationMessageFor(model => model.GPLX, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
 
                 <div class="line-form">
                     <div class="custom-input">
@@ -107,8 +109,6 @@
                         </div>
                     </div>
                 </div>
-
-
 
                 <div class="line-form">
                     <div class="custom-input">
